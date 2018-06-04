@@ -1,5 +1,5 @@
 {
-    "name": "breeze/slumen",
+    "name": "breeze2/slumen",
     "description": "speed up lumen with swoole",
     "type": "library",
     "license": "MIT",
