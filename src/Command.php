@@ -4,26 +4,25 @@ namespace BL\Slumen;
 class Command
 {
     const VERSION       = 'slumen 0.1.0';
-    const CONFIG_PREFIX = 'SWOOLE_HTTP_';
+    const CONFIG_PREFIX = 'SLUMEN_';
 
-    protected $lumen;
     protected $bootstrap;
     protected $config;
     protected $setting;
     protected $pidFile;
-    protected $service;
 
     private function __construct()
     {
-        $this->checkBootstrap();
-        $this->lumen   = require $this->bootstrap;
-        $this->config  = $this->initializeConfig();
-        $this->setting = $this->initializeSetting();
-        $this->pidFile = $this->config['pid_file'];
+        if($this->checkBootstrap()){
+            require $this->bootstrap;
+            $this->config  = $this->initializeConfig();
+            $this->setting = $this->initializeSetting();
+            $this->pidFile = $this->config['pid_file'];
+        }
 
     }
 
-    private function checkBootstrap($file = 'swoole.php')
+    private function checkBootstrap($file = 'slumen.php')
     {
         $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
@@ -103,7 +102,7 @@ class Command
         $setting['worker_num'] = env(self::CONFIG_PREFIX . 'WORKER_NUM', 1);
         $setting['max_conn']   = env(self::CONFIG_PREFIX . 'MAX_CONNECTIOIN') ?: env(self::CONFIG_PREFIX . 'MAX_CONN', 255);
         $setting['daemonize']  = env(self::CONFIG_PREFIX . 'DAEMONIZE', true);
-        $setting['log_file']   = env(self::CONFIG_PREFIX . 'LOG_FILE', storage_path('logs/swoole-http.log'));
+        $setting['log_file']   = env(self::CONFIG_PREFIX . 'LOG_FILE', storage_path('logs/slumen.log'));
 
         return $setting;
     }
@@ -115,10 +114,10 @@ class Command
         $config['gzip']             = env(self::CONFIG_PREFIX . 'GZIP', 1);
         $config['gzip_min_length']  = env(self::CONFIG_PREFIX . 'GZIP_MIN_LENGTH', 1024);
         $config['static_resources'] = env(self::CONFIG_PREFIX . 'STATIC_RESOURCES', false);
-        $config['pid_file']         = env(self::CONFIG_PREFIX . 'PID_FILE', storage_path('app/swoole-http.pid'));
+        $config['pid_file']         = env(self::CONFIG_PREFIX . 'PID_FILE', storage_path('app/slumen.pid'));
         // $config['stats']            = env(self::CONFIG_PREFIX . 'STATS', true);
-        $config['stats_uri']         = env(self::CONFIG_PREFIX . 'STATS_URI', '/swoole-http-stats');
-        $config['request_log_path']  = realpath(env(self::CONFIG_PREFIX . 'REQUEST_LOG_PATH'));
+        $config['stats_uri']         = env(self::CONFIG_PREFIX . 'STATS_URI', '/slumen-stats');
+        $config['http_log_path']     = realpath(env(self::CONFIG_PREFIX . 'HTTP_LOG_PATH'));
         $config['root_dir']          = base_path();
         $config['public_dir']        = base_path('public');
         $config['bootstrap']         = $this->bootstrap;
@@ -169,7 +168,7 @@ class Command
             exit(1);
         }
 
-        $service = new Service($this->lumen, $this->config, $this->setting);
+        $service = new Service($this->config, $this->setting);
         $service->start();
     }
 
