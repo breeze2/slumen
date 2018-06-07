@@ -3,47 +3,45 @@
 namespace BL\Slumen\SwooleHttp;
 
 use ErrorException;
-use swoole_http_server as SwooleHttpServer;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
-
+use swoole_http_server as SwooleHttpServer;
 use Symfony\Component\HttpFoundation\BinaryFileResponse as SymfonyBinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
-use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 
 class Worker
 {
-	protected $id = null;
-	protected $server = null;
-	protected $logger = null;
-	protected $config = null;
-	public $app = null;
+    protected $id     = null;
+    protected $server = null;
+    protected $logger = null;
+    protected $config = null;
+    public $app       = null;
 
-	public function __construct(SwooleHttpServer $server, $worker_id, array $config)
-	{
-		$this->id = $worker_id;
-		$this->server = $server;
-		$this->config = $config;
-		$this->loadApplication();
-		$this->makeLogger();
-	}
+    public function __construct(SwooleHttpServer $server, $worker_id, array $config)
+    {
+        $this->id     = $worker_id;
+        $this->server = $server;
+        $this->config = $config;
+        $this->loadApplication();
+        $this->makeLogger();
+    }
 
-	public function makeLogger()
-	{
-		unset($this->logger);
-		$http_log_path = $this->config['http_log_path'];
-		if($http_log_path) {
-			$file = $this->config['http_log_path'] . '/' . date('Y-m-d') . '_' . $this->id . '.log';
-			$this->logger = new Logger($file);
-		}
-	}
+    public function makeLogger()
+    {
+        unset($this->logger);
+        $http_log_path = $this->config['http_log_path'];
+        if ($http_log_path) {
+            $file         = $this->config['http_log_path'] . '/' . date('Y-m-d') . '_' . $this->id . '.log';
+            $this->logger = new Logger($file);
+        }
+    }
 
-	public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
-	{
-		$request = new Request($req);
-		$response = new Response($res);
+    public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
+    {
+        $request  = new Request($req);
+        $response = new Response($res);
 
-		if ($this->config['stats_uri'] && $request->server['REQUEST_URI'] === $this->config['stats_uri']) {
+        if ($this->config['stats_uri'] && $request->server['REQUEST_URI'] === $this->config['stats_uri']) {
             if ($this->sendStatsJson($request, $response)) {
                 return;
             }
@@ -61,24 +59,24 @@ class Worker
         } catch (ErrorException $e) {
             $this->logServerError($e);
         }
-	}
+    }
 
-	protected function sendStatsJson(Request $request, Response $response)
+    protected function sendStatsJson(Request $request, Response $response)
     {
         $stats = json_encode($this->server->stats());
         $response->header('Content-Type', 'application/json');
         $response->end($stats);
 
         $this->logHttpAccess($request->server, array(
-			'STATUS' => 200,
-			'BODY_BYTES_SENT' => strlen($stats),
+            'STATUS'          => 200,
+            'BODY_BYTES_SENT' => strlen($stats),
         ));
         return true;
     }
 
     protected function sendStaticResource(Request $request, Response $response)
     {
-    	$public_dir = $this->config['public_dir'];
+        $public_dir = $this->config['public_dir'];
         $uri        = $request->server['REQUEST_URI'];
         $file       = realpath($public_dir . $uri);
         $status     = 200;
@@ -94,8 +92,8 @@ class Worker
                 $response->sendFile($file);
             }
             $this->logHttpAccess($request->server, array(
-            	'STATUS'=>$status,
-				'BODY_BYTES_SENT' => $status===200 ? filesize($file) : 0,
+                'STATUS'          => $status,
+                'BODY_BYTES_SENT' => $status === 200 ? filesize($file) : 0,
             ));
             return true;
         }
@@ -104,33 +102,33 @@ class Worker
 
     protected function sendLumenResponse(Request $request, Response $response)
     {
-    	$http_request = $request->parseIlluminateRequest();
-    	$http_response = $this->app->dispatch($http_request);
+        $http_request  = $request->parseIlluminateRequest();
+        $http_response = $this->app->dispatch($http_request);
 
-    	$response->setHeaders($http_response->headers->allPreserveCase());
-    	$response->setCookies($http_response->headers->getCookies());
+        $response->setHeaders($http_response->headers->allPreserveCase());
+        $response->setCookies($http_response->headers->getCookies());
 
-    	$content = '';
+        $content         = '';
         $body_bytes_sent = 0;
-        $status = 200;
-    	if ($http_response instanceof SymfonyBinaryFileResponse) {
+        $status          = 200;
+        if ($http_response instanceof SymfonyBinaryFileResponse) {
             $file = $http_response->getFile()->getPathname();
 
-            $status = $http_response->getStatusCode();
+            $status          = $http_response->getStatusCode();
             $body_bytes_sent = filesize($file);
-            
+
             $response->sendfile($file);
 
         } else if ($http_response instanceof SymfonyResponse) {
-        	$content = $http_response->getContent();
-        	$status = $http_response->getStatusCode();
-        	$body_bytes_sent = strlen($content);
-            
+            $content         = $http_response->getContent();
+            $status          = $http_response->getStatusCode();
+            $body_bytes_sent = strlen($content);
+
             // gzip handle
             $accept_gzip = $this->config['gzip'] > 0 && isset($request->header['HTTP_ACCEPT_ENCODING']) && stripos($request->header['HTTP_ACCEPT_ENCODING'], 'gzip') !== false;
 
-            if($accept_gzip && $body_bytes_sent > $this->config['gzip_min_length'] && $response->checkGzipMime()) {
-            	$response->gzip($this->config['gzip']);
+            if ($accept_gzip && $body_bytes_sent > $this->config['gzip_min_length'] && $response->checkGzipMime()) {
+                $response->gzip($this->config['gzip']);
             }
 
             $response->end($content);
@@ -138,34 +136,33 @@ class Worker
                 $this->app->callTerminableMiddleware($http_response);
             }
         } else {
-        	$content = (string) $http_response;
-        	$status = 200;
-        	$body_bytes_sent = strlen($content);
+            $content         = (string) $http_response;
+            $status          = 200;
+            $body_bytes_sent = strlen($content);
 
-        	$response->end($content);
+            $response->end($content);
         }
 
-        
         $this->logHttpAccess($request->server, array(
-        	'STATUS' => $status,
-        	'BODY_BYTES_SENT' => $body_bytes_sent,
+            'STATUS'          => $status,
+            'BODY_BYTES_SENT' => $body_bytes_sent,
         ));
     }
 
-	protected function loadApplication()
+    protected function loadApplication()
     {
-    	unset($this->app);
+        unset($this->app);
         $bootstrap = $this->config['bootstrap'];
         $this->app = require $bootstrap;
     }
 
     public function logHttpAccess(array $request_server, array $meta)
     {
-    	if($this->logger) {
-    		$log = array_merge($request_server, $meta);
-    		$log['RESPONSE_TIME_FLOAT'] = microtime(true);
-        	$this->logger->accessJSON($log);
-    	}
+        if ($this->logger) {
+            $log                        = array_merge($request_server, $meta);
+            $log['RESPONSE_TIME_FLOAT'] = microtime(true);
+            $this->logger->accessJSON($log);
+        }
     }
 
     public function logServerError(ErrorException $e)

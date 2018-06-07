@@ -13,7 +13,7 @@ class Command
 
     private function __construct()
     {
-        if($this->checkBootstrap()){
+        if ($this->checkBootstrap()) {
             require $this->bootstrap;
             $this->config  = $this->initializeConfig();
             $this->setting = $this->initializeSetting();
