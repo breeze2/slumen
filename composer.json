@@ -24,5 +24,9 @@
     },
     "bin": [
         "bin/slumen"
-    ]
+    ],
+    "script": {
+        "pre-package-install": "BL\\Slumen\\Command::postPackageInstall",
+        "post-package-uninstall": "BL\\Slumen\\Command::postPackageUninstall"
+    }
 }
