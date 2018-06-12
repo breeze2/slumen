@@ -10,6 +10,7 @@ class Service
     protected $worker;
     protected $config;
     protected $setting;
+    protected $hook;
 
     public function __construct(array $config, array $setting)
     {
@@ -23,6 +24,8 @@ class Service
 
     public function start()
     {
+        $this->makeHook($this->config['service_hook']);
+
         $this->server->on('start', array($this, 'onStart'));
         $this->server->on('shutdown', array($this, 'onShutdown'));
         $this->server->on('workerStart', array($this, 'onWorkerStart'));
@@ -32,31 +35,55 @@ class Service
         $this->server->start();
     }
 
-    public function onStart($serv)
+    public function onStart($server)
     {
         $file = $this->config['pid_file'];
-        file_put_contents($file, $serv->master_pid);
+        file_put_contents($file, $server->master_pid);
+
+        $this->hook && $this->hook->startedHandle($server);
     }
 
-    public function onShutdown()
+    public function onShutdown($server)
     {
         $file = $this->config['pid_file'];
         unlink($file);
+
+        $this->hook && $this->hook->stoppedHandle($server);
     }
 
     public function onWorkerStart($server, $worker_id)
     {
         $this->worker = new Worker($server, $worker_id, $this->config);
+
+        $this->hook && $this->hook->workStartedHandle($server, $worker_id);
     }
 
     public function onWorkerStop($server, $worker_id)
     {
         unset($this->worker);
+
+        $this->hook && $this->hook->workStoppedHandle($server, $worker_id);
     }
 
     public function onRequest($request, $response)
     {
+        if($this->hook) {
+            if($this->hook->requestedHandle() === false) {
+                return false;
+            }
+        }
+
         $this->worker->handle($request, $response);
+    }
+
+    protected function makeHook($class)
+    {
+        if($class && class_exists($class)) {
+            $hook = new $class;
+            if($hook instanceof ServiceHook) {
+                $this->hook =$hook;
+            }
+        }
     }
 
 }

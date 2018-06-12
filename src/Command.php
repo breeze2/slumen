@@ -31,7 +31,7 @@ class Command
             $this->bootstrap = $bootstrap_file;
             return true;
         } else {
-            echo 'please copy ' . realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/') . $file . PHP_EOL;
+            echo 'please copy ' . realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/' . $file) . PHP_EOL;
             echo 'to ' . realpath($bootstrap_path) . '/' . PHP_EOL;
             exit(1);
         }
@@ -122,7 +122,7 @@ class Command
         $config['root_dir']          = base_path();
         $config['public_dir']        = base_path('public');
         $config['bootstrap']         = $this->bootstrap;
-        $config['max_coroutine']     = env(self::CONFIG_PREFIX . 'MAX_COROUTINE', 10);
+        $config['service_hook']      = env(self::CONFIG_PREFIX . 'SERVICE_HOOK');
         $config['xhgui_collect']     = env(self::CONFIG_PREFIX . 'XHGUI_COLLECT', false);
         $config['xhgui_config_path'] = base_path('config/xhgui.php');
         return $config;
