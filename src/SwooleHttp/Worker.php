@@ -15,6 +15,8 @@ class Worker
     protected $server = null;
     protected $logger = null;
     protected $config = null;
+    protected $hook   = null;
+    
     public $app       = null;
 
     public function __construct(SwooleHttpServer $server, $worker_id, array $config)
@@ -24,6 +26,11 @@ class Worker
         $this->config = $config;
         $this->loadApplication();
         $this->makeLogger();
+    }
+
+    public function setServiceHook($hook)
+    {
+        $this->hook = $hook;
     }
 
     public function makeLogger()
@@ -167,6 +174,12 @@ class Worker
 
     public function logServerError(ErrorException $e)
     {
+        if($this->hook) {
+            if($this->hook->serverErrorHandle() === false) {
+                return false;
+            }
+        }
+        
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
         fwrite(STDOUT, sprintf('%s%s(%d): %s', $prefix, $e->getFile(), $e->getLine(), $e->getMessage()) . PHP_EOL);
     }

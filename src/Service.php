@@ -54,8 +54,10 @@ class Service
     public function onWorkerStart($server, $worker_id)
     {
         $this->worker = new Worker($server, $worker_id, $this->config);
-
-        $this->hook && $this->hook->workStartedHandle($server, $worker_id);
+        if ($this->hook) {
+            $this->worker->setServiceHook($this->hook);
+            $this->hook->workStartedHandle($server, $worker_id);
+        }
     }
 
     public function onWorkerStop($server, $worker_id)
