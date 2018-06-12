@@ -24,10 +24,5 @@
     },
     "bin": [
         "bin/slumen"
-    ],
-    "script": {
-        "post-package-install": "BL\\Slumen\\ComposerHook::postPackageInstall",
-        "post-package-update": "BL\\Slumen\\ComposerHook::postPackageInstall",
-        "post-package-uninstall": "BL\\Slumen\\ComposerHook::postPackageUninstall"
-    }
+    ]
 }
