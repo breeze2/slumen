@@ -12,21 +12,6 @@ class Command
     protected $setting;
     protected $pidFile;
 
-    public static function postPackageInstall($file = self::DEFAULT_BOOTSTRAP_FILE_NAME)
-    {
-        $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
-        $bootstrap_file = $bootstrap_path . $file;
-        $source         = realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/') . $file;
-        if (!file_exists($bootstrap_file)) {
-            copy($source, $bootstrap_file);
-        }
-    }
-
-    public static function postPackageUninstall()
-    {
-
-    }
-
     private function __construct()
     {
         if ($this->checkBootstrap()) {
