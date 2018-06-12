@@ -12,11 +12,12 @@ class ComposerHook
         if (!COMPOSER_VENDOR_PATH) {
             return false;
         }
-        $bootstrap_path = COMPOSER_VENDOR_PATH . '/../bootstrap/';
-        $bootstrap_file = $bootstrap_path . $file;
-        $source         = realpath(COMPOSER_VENDOR_PATH . '/breeze2/slumen/bootstrap/') . $file;
-        if (!file_exists($bootstrap_file)) {
-            copy($source, $bootstrap_file);
+        $bootstrap_path = COMPOSER_VENDOR_PATH . '/../bootstrap';
+        $bootstrap_file = $bootstrap_path . '/' . $file;
+        $source         = realpath(COMPOSER_VENDOR_PATH . '/breeze2/slumen/bootstrap/slumen.php');
+
+        if ($source && !file_exists($bootstrap_file)) {
+            copy($source, realpath($bootstrap_path) . '/' . $file);
         }
         return true;
     }
