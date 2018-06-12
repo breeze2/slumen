@@ -3,27 +3,28 @@ namespace BL\Slumen;
 
 class Command
 {
-    const VERSION       = 'slumen 0.1.0';
-    const CONFIG_PREFIX = 'SLUMEN_';
+    const VERSION                     = 'slumen 0.1.0';
+    const CONFIG_PREFIX               = 'SLUMEN_';
+    const DEFAULT_BOOTSTRAP_FILE_NAME = 'slumen.php';
 
     protected $bootstrap;
     protected $config;
     protected $setting;
     protected $pidFile;
 
-
-    public static function postPackageInstall() {
-        $file = 'slumen.php';
+    public static function postPackageInstall($file = self::DEFAULT_BOOTSTRAP_FILE_NAME)
+    {
         $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
-        $source = realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/') . $file;
-        if(!file_exists($bootstrap_file)) {
+        $source         = realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/') . $file;
+        if (!file_exists($bootstrap_file)) {
             copy($source, $bootstrap_file);
         }
     }
 
-    public static function postPackageUninstall() {
-        
+    public static function postPackageUninstall()
+    {
+
     }
 
     private function __construct()
@@ -37,7 +38,7 @@ class Command
 
     }
 
-    private function checkBootstrap($file = 'slumen.php')
+    private function checkBootstrap($file = self::DEFAULT_BOOTSTRAP_FILE_NAME)
     {
         $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
