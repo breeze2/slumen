@@ -15,7 +15,7 @@ class Worker
     protected $server = null;
     protected $logger = null;
     protected $config = null;
-    protected $hook   = null;
+    protected $service_hook   = null;
 
     protected $request_count = 0;
     
@@ -30,9 +30,9 @@ class Worker
         $this->makeLogger();
     }
 
-    public function setServiceHook($hook)
+    public function setServiceHook($service_hook)
     {
-        $this->hook = $hook;
+        $this->service_hook = $service_hook;
     }
 
     public function makeLogger()
@@ -50,27 +50,44 @@ class Worker
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
     {
+        $this->incrementRequestCount();
         $request  = new Request($req);
         $response = new Response($res);
 
         if ($this->config['stats_uri'] && $request->server['REQUEST_URI'] === $this->config['stats_uri']) {
             if ($this->sendStatsJson($request, $response)) {
-                return;
+                return true;
             }
         }
 
         if ($this->config['static_resources'] && $request->server['REQUEST_METHOD'] === 'GET') {
             if ($this->sendStaticResource($request, $response)) {
-                return;
+                return true;
             }
         }
 
         try {
             $this->sendLumenResponse($request, $response);
-
+            return true;
         } catch (ErrorException $e) {
             $this->logServerError($e);
         }
+        return false;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getRequestCount()
+    {
+        return $this->request_count;
+    }
+
+    protected function incrementRequestCount($step = 1)
+    {
+        $this->request_count += $step;
     }
 
     protected function sendStatsJson(Request $request, Response $response)
@@ -179,8 +196,8 @@ class Worker
 
     public function logServerError(ErrorException $e)
     {
-        if($this->hook) {
-            if($this->hook->serverErrorHandle() === false) {
+        if($this->service_hook) {
+            if($this->service_hook->serverErrorHandle() === false) {
                 return false;
             }
         }
