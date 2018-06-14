@@ -16,6 +16,8 @@ class Worker
     protected $logger = null;
     protected $config = null;
     protected $hook   = null;
+
+    protected $request_count = 0;
     
     public $app       = null;
 
@@ -38,8 +40,11 @@ class Worker
         unset($this->logger);
         $http_log_path = $this->config['http_log_path'];
         if ($http_log_path) {
-            $file         = $this->config['http_log_path'] . '/' . date('Y-m-d') . '_' . $this->id . '.log';
-            $this->logger = new Logger($file);
+            $http_log_single = $this->config['http_log_single'];
+            $file_name = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $this->id . '.log';
+            
+            $file = $http_log_path . '/' . $file_name;
+            $this->logger = new Logger($file, $http_log_single);
         }
     }
 
@@ -179,7 +184,7 @@ class Worker
                 return false;
             }
         }
-        
+
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
         fwrite(STDOUT, sprintf('%s%s(%d): %s', $prefix, $e->getFile(), $e->getLine(), $e->getMessage()) . PHP_EOL);
     }

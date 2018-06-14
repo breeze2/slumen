@@ -7,14 +7,18 @@ class Logger
     protected $stream = null;
     protected $file   = null;
 
-    public function __construct($file)
+    public function __construct($file, $single)
     {
         $this->file   = $file;
-        $this->stream = fopen($this->file, 'a');
+        $single || $this->stream = fopen($this->file, 'a');
     }
 
     public function accessJSON(array $data)
     {
-        fwrite($this->stream, json_encode($data) . "\n");
+        if($this->stream) {
+            fwrite($this->stream, json_encode($data) . "\n");
+        } else {
+            error_log($this->file, json_encode($data) . "\n");
+        }
     }
 }
