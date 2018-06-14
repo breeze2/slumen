@@ -11,15 +11,15 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Worker
 {
-    protected $id     = null;
-    protected $server = null;
-    protected $logger = null;
-    protected $config = null;
-    protected $service_hook   = null;
+    protected $id           = null;
+    protected $server       = null;
+    protected $logger       = null;
+    protected $config       = null;
+    protected $service_hook = null;
 
     protected $request_count = 0;
-    
-    public $app       = null;
+
+    public $app = null;
 
     public function __construct(SwooleHttpServer $server, $worker_id, array $config)
     {
@@ -41,9 +41,9 @@ class Worker
         $http_log_path = $this->config['http_log_path'];
         if ($http_log_path) {
             $http_log_single = $this->config['http_log_single'];
-            $file_name = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $this->id . '.log';
-            
-            $file = $http_log_path . '/' . $file_name;
+            $file_name       = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $this->id . '.log';
+
+            $file         = $http_log_path . '/' . $file_name;
             $this->logger = new Logger($file, $http_log_single);
         }
     }
@@ -196,8 +196,8 @@ class Worker
 
     public function logServerError(ErrorException $e)
     {
-        if($this->service_hook) {
-            if($this->service_hook->serverErrorHandle() === false) {
+        if ($this->service_hook) {
+            if ($this->service_hook->serverErrorHandle($e) === false) {
                 return false;
             }
         }

@@ -20,7 +20,7 @@ class Service
         $this->setting = $setting;
         $this->initMaxRequestCount();
 
-        $this->server  = new SwooleHttpServer($config['host'], $config['port']);
+        $this->server = new SwooleHttpServer($config['host'], $config['port']);
         if (isset($setting) && !empty($setting)) {
             $this->server->set($setting);
         }
@@ -73,8 +73,8 @@ class Service
 
     public function onRequest($request, $response)
     {
-        if($this->hook) {
-            if($this->hook->requestedHandle($request, $response) === false) {
+        if ($this->hook) {
+            if ($this->hook->requestedHandle($request, $response) === false) {
                 return false;
             }
         }
@@ -87,27 +87,27 @@ class Service
 
     protected function initMaxRequestCount()
     {
-        if($this->setting['max_request']) {
+        if ($this->setting['max_request']) {
             $this->max_request_count = (int) $this->setting['max_request'];
         }
-        if($this->max_request_count < 1 ) {
+        if ($this->max_request_count < 1) {
             $this->max_request_count = 0;
-        }   
+        }
     }
 
     protected function shouldCloseWorker()
     {
-        if($this->worker->getRequestCount() > $this->max_request_count) {
-            $this->server->stop($this->worker->getId());
+        if ($this->worker->getRequestCount() > $this->max_request_count) {
+            $this->server->stop($this->worker->getId(), true);
         }
     }
 
     protected function makeHook($class)
     {
-        if($class && class_exists($class)) {
+        if ($class && class_exists($class)) {
             $hook = new $class;
-            if($hook instanceof ServiceHook) {
-                $this->hook =$hook;
+            if ($hook instanceof ServiceHook) {
+                $this->hook = $hook;
             }
         }
     }

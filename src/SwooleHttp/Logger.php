@@ -18,7 +18,7 @@ class Logger
         if($this->stream) {
             fwrite($this->stream, json_encode($data) . "\n");
         } else {
-            error_log($this->file, json_encode($data) . "\n");
+            error_log(json_encode($data) . "\n", 3, $this->file);
         }
     }
 }
