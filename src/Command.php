@@ -43,7 +43,7 @@ class Command
         $params = array(
             'reactor_num',
             // 'worker_num',
-            'max_request',
+            // 'max_request',
             // 'max_conn',
             'task_worker_num',
             'task_ipc_mode',
@@ -100,10 +100,11 @@ class Command
             }
         }
 
-        $setting['worker_num'] = env(self::CONFIG_PREFIX . 'WORKER_NUM', 1);
-        $setting['max_conn']   = env(self::CONFIG_PREFIX . 'MAX_CONNECTIOIN') ?: env(self::CONFIG_PREFIX . 'MAX_CONN', 255);
-        $setting['daemonize']  = env(self::CONFIG_PREFIX . 'DAEMONIZE', true);
-        $setting['log_file']   = env(self::CONFIG_PREFIX . 'LOG_FILE', storage_path('logs/slumen.log'));
+        $setting['max_request'] = env(self::CONFIG_PREFIX . 'MAX_REQUEST', 0);
+        $setting['worker_num']  = env(self::CONFIG_PREFIX . 'WORKER_NUM', 1);
+        $setting['daemonize']   = env(self::CONFIG_PREFIX . 'DAEMONIZE', true);
+        $setting['log_file']    = env(self::CONFIG_PREFIX . 'LOG_FILE', storage_path('logs/slumen.log'));
+        $setting['max_conn']    = env(self::CONFIG_PREFIX . 'MAX_CONNECTIOIN') ?: env(self::CONFIG_PREFIX . 'MAX_CONN', 255);
 
         return $setting;
     }
