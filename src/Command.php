@@ -3,7 +3,7 @@ namespace BL\Slumen;
 
 class Command
 {
-    const VERSION                     = 'slumen 0.1.0';
+    const VERSION                     = 'slumen 0.6.0';
     const CONFIG_PREFIX               = 'SLUMEN_';
     const DEFAULT_BOOTSTRAP_FILE_NAME = 'slumen.php';
 
@@ -104,7 +104,7 @@ class Command
         $setting['worker_num']  = env(self::CONFIG_PREFIX . 'WORKER_NUM', 1);
         $setting['daemonize']   = env(self::CONFIG_PREFIX . 'DAEMONIZE', true);
         $setting['log_file']    = env(self::CONFIG_PREFIX . 'LOG_FILE', storage_path('logs/slumen.log'));
-        $setting['max_conn']    = env(self::CONFIG_PREFIX . 'MAX_CONNECTIOIN') ?: env(self::CONFIG_PREFIX . 'MAX_CONN', 255);
+        $setting['max_conn']    = env(self::CONFIG_PREFIX . 'MAX_CONNECTION') ?: env(self::CONFIG_PREFIX . 'MAX_CONN', 1024);
 
         return $setting;
     }
@@ -125,8 +125,6 @@ class Command
         $config['public_dir']        = base_path('public');
         $config['bootstrap']         = $this->bootstrap;
         $config['service_hook']      = env(self::CONFIG_PREFIX . 'SERVICE_HOOK');
-        $config['xhgui_collect']     = env(self::CONFIG_PREFIX . 'XHGUI_COLLECT', false);
-        $config['xhgui_config_path'] = base_path('config/xhgui.php');
         return $config;
     }
 
