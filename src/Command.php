@@ -119,7 +119,8 @@ class Command
         $config['pid_file']         = env(self::CONFIG_PREFIX . 'PID_FILE', storage_path('app/slumen.pid'));
         // $config['stats']            = env(self::CONFIG_PREFIX . 'STATS', true);
         $config['stats_uri']         = env(self::CONFIG_PREFIX . 'STATS_URI', '/slumen-stats');
-        $config['http_log_path']     = realpath(env(self::CONFIG_PREFIX . 'HTTP_LOG_PATH'));
+        $config['http_log_path']     = env(self::CONFIG_PREFIX . 'HTTP_LOG_PATH', false);
+        $config['http_log_path']     = $config['http_log_path'] ? realpath($config['http_log_path']) : false;
         $config['http_log_single']   = env(self::CONFIG_PREFIX . 'HTTP_LOG_SINGLE', false);
         $config['root_dir']          = base_path();
         $config['public_dir']        = base_path('public');
