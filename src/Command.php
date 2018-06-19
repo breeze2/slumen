@@ -111,6 +111,10 @@ class Command
 
     private function initializeConfig()
     {
+        $config = array();
+        $config['running_mode']     = constant(env(self::CONFIG_PREFIX . 'RUNNING_MODE', 'SWOOLE_PROCESS'));
+        $config['socket_type']      = constant(env(self::CONFIG_PREFIX . 'SOCKET_TYPE', 'SWOOLE_SOCK_TCP'));
+
         $config['host']             = env(self::CONFIG_PREFIX . 'HOST', '127.0.0.1');
         $config['port']             = env(self::CONFIG_PREFIX . 'PORT', 9080);
         $config['gzip']             = env(self::CONFIG_PREFIX . 'GZIP', 1);
