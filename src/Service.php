@@ -82,7 +82,7 @@ class Service
         $flag = $this->worker->handle($request, $response);
         $flag && $this->hook && $this->hook->respondedHandle($request, $response);
 
-        $this->max_request_count && $this->shouldCloseWorker();
+        // $this->max_request_count && $this->shouldCloseWorker();
     }
 
     protected function initMaxRequestCount()
