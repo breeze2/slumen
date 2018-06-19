@@ -37,7 +37,8 @@ class Worker
 
     public function makeLogger()
     {
-        unset($this->logger);
+        // unset($this->logger);
+        $this->logger = null;
         $http_log_path = $this->config['http_log_path'];
         if ($http_log_path) {
             $http_log_single = $this->config['http_log_single'];
