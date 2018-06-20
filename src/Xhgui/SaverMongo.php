@@ -25,7 +25,7 @@ class SaverMongo extends Xhgui_Saver_Mongo
     public function save(array $data)
     {
         $data['_id'] = self::getLastProfilingId();
-        var_dump($data['_id']);
+        // var_dump($data['_id']);
         return $this->_collection->insert($data, array('w' => 0));
     }
 

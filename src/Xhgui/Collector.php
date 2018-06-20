@@ -28,12 +28,12 @@ class Collector
         $uri    = $this->uri;
         $get    = $this->get;
         $data   = [];
-        $time   = array_key_exists('REQUEST_TIME', $server)
-        ? $server['REQUEST_TIME']
+        $time   = array_key_exists('request_time', $server)
+        ? $server['request_time']
         : time();
 
-        $delimiter        = (strpos($server['REQUEST_TIME_FLOAT'], ',') !== false) ? ',' : '.';
-        $requestTimeFloat = explode($delimiter, $server['REQUEST_TIME_FLOAT']);
+        $delimiter        = (strpos($server['request_time_float'], ',') !== false) ? ',' : '.';
+        $requestTimeFloat = explode($delimiter, $server['request_time_float']);
         if (!isset($requestTimeFloat[1])) {
             $requestTimeFloat[1] = 0;
         }
