@@ -32,6 +32,7 @@ class Service
         $this->server->on('shutdown', array($this, 'onShutdown'));
         $this->server->on('workerStart', array($this, 'onWorkerStart'));
         $this->server->on('workerStop', array($this, 'onWorkerStop'));
+        $this->server->on('workerError', array($this, 'onWorkerError'));
         $this->server->on('request', array($this, 'onRequest'));
 
         $this->server->start();
