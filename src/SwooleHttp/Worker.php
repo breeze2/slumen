@@ -17,8 +17,6 @@ class Worker
     protected $config       = null;
     protected $service_hook = null;
 
-    protected $request_count = 0;
-
     public $app = null;
 
     public function __construct(SwooleHttpServer $server, $worker_id, array $config)
@@ -51,7 +49,6 @@ class Worker
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
     {
-        $this->incrementRequestCount();
         $request  = new Request($req);
         $response = new Response($res);
 
@@ -79,16 +76,6 @@ class Worker
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getRequestCount()
-    {
-        return $this->request_count;
-    }
-
-    protected function incrementRequestCount($step = 1)
-    {
-        $this->request_count += $step;
     }
 
     protected function sendStatsJson(Request $request, Response $response)

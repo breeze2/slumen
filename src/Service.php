@@ -12,8 +12,6 @@ class Service
     protected $setting;
     protected $hook;
 
-    protected $max_request_count = 0;
-
     public function __construct(array $config, array $setting)
     {
         $this->config  = $config;
@@ -81,25 +79,6 @@ class Service
 
         $flag = $this->worker->handle($request, $response);
         $flag && $this->hook && $this->hook->respondedHandle($request, $response);
-
-        // $this->max_request_count && $this->shouldCloseWorker();
-    }
-
-    protected function initMaxRequestCount()
-    {
-        if ($this->setting['max_request']) {
-            $this->max_request_count = (int) $this->setting['max_request'];
-        }
-        if ($this->max_request_count < 1) {
-            $this->max_request_count = 0;
-        }
-    }
-
-    protected function shouldCloseWorker()
-    {
-        if ($this->worker->getRequestCount() > $this->max_request_count) {
-            $this->server->stop($this->worker->getId(), true);
-        }
     }
 
     protected function makeHook($class)
