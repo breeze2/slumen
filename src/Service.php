@@ -16,7 +16,6 @@ class Service
     {
         $this->config  = $config;
         $this->setting = $setting;
-        $this->initMaxRequestCount();
 
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
         if (isset($setting) && !empty($setting)) {
