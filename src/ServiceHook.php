@@ -7,13 +7,15 @@ interface ServiceHook
 
     public function stoppedHandle($server);
 
-    public function workStartedHandle($server, $worker_id);
+    public function workerStartedHandle($server, $worker_id);
 
-    public function workStoppedHandle($server, $worker_id);
+    public function workerStoppedHandle($server, $worker_id);
 
     public function requestedHandle($request, $response);
-    
+
     public function respondedHandle($request, $response);
+
+    public function workerErrorHandle($server, $worker_id, $worker_pid, $exit_code, $signal);
 
     public function serverErrorHandle($error);
 }

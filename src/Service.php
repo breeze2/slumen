@@ -58,7 +58,7 @@ class Service
         $this->worker = new Worker($server, $worker_id, $this->config);
         if ($this->hook) {
             $this->worker->setServiceHook($this->hook);
-            $this->hook->workStartedHandle($server, $worker_id);
+            $this->hook->workerStartedHandle($server, $worker_id);
         }
     }
 
@@ -66,7 +66,12 @@ class Service
     {
         unset($this->worker);
 
-        $this->hook && $this->hook->workStoppedHandle($server, $worker_id);
+        $this->hook && $this->hook->workerStoppedHandle($server, $worker_id);
+    }
+
+    public function onWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal)
+    {
+        $this->hook && $this->hook->workerErrorHandle($server, $worker_id, $worker_pid, $exit_code, $signal);
     }
 
     public function onRequest($request, $response)
