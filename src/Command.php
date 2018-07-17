@@ -79,7 +79,7 @@ class Command
         $config['service_hook']     = $slumen['service_hook'];
 
         $config['bootstrap'] = $this->bootstrap;
-        
+
         return $config;
     }
 
@@ -132,14 +132,16 @@ class Command
     {
         $time = 0;
         $pid  = $this->getPid();
-        $this->sendSignal(SIGTERM);
-        while (posix_getpgid($pid) && $time <= 10) {
-            sleep(1);
-            $time++;
-        }
-        if ($time > 10 && posix_getpgid($pid)) {
-            echo 'slumen stop timeout' . PHP_EOL;
-            exit(1);
+        if ($pid) {
+            $this->sendSignal(SIGTERM);
+            while (posix_getpgid($pid) && $time <= 10) {
+                sleep(1);
+                $time++;
+            }
+            if ($time > 10 && posix_getpgid($pid)) {
+                echo 'slumen stop timeout' . PHP_EOL;
+                exit(1);
+            }
         }
         $this->startService();
     }
