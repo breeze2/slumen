@@ -2,7 +2,6 @@
 
 return array(
 
-
     'running_mode'     => constant(env('SLUMEN_RUNNING_MODE', 'SWOOLE_PROCESS')),
     'socket_type'      => constant(env('SLUMEN_SOCKET_TYPE', 'SWOOLE_SOCK_TCP')),
 
@@ -32,6 +31,9 @@ return array(
         'max_conn'                 => env('SLUMEN_MAX_CONN', 1024),
 
         'reactor_num'              => env('SLUMEN_REACTOR_NUM'),
+        // 'worker_num'               => env('SLUMEN_WORKER_NUM'),
+        // 'max_request'              => env('SLUMEN_MAX_REQUEST'),
+        // 'max_connection'           => env('SLUMEN_MAX_CONNECTION'),
         'task_worker_num'          => env('SLUMEN_TASK_WORKER_NUM'),
         'task_ipc_mode'            => env('SLUMEN_TASK_IPC_MODE'),
         'task_max_request'         => env('SLUMEN_TASK_MAX_REQUEST'),
@@ -39,7 +41,9 @@ return array(
         'dispatch_mode'            => env('SLUMEN_DISPATCH_MODE'),
         'dispatch_func'            => env('SLUMEN_DISPATCH_FUNC'),
         'message_queue_key'        => env('SLUMEN_MESSAGE_QUEUE_KEY'),
+        // 'daemonize'                => env('SLUMEN_DAEMONIZE'),
         'backlog'                  => env('SLUMEN_BACKLOG'),
+        // 'log_file'                 => env('SLUMEN_LOG_FILE'),
         'log_level'                => env('SLUMEN_LOG_LEVEL'),
         'heartbeat_check_interval' => env('SLUMEN_HEARTBEAT_CHECK_INTERVAL'),
         'heartbeat_idle_time'      => env('SLUMEN_HEARTBEAT_IDLE_TIME'),
@@ -67,7 +71,6 @@ return array(
         'enable_unsafe_event'      => env('SLUMEN_ENABLE_UNSAFE_EVENT'),
         'discard_timeout_request'  => env('SLUMEN_DISCARD_TIMEOUT_REQUEST'),
         'enable_reuse_port'        => env('SLUMEN_ENABLE_REUSE_PORT'),
-        'ssl_ciphers'              => env('SLUMEN_SSL_CIPHERS'),
         'enable_delay_receive'     => env('SLUMEN_ENABLE_DELAY_RECEIVE'),
         'open_http_protocol'       => env('SLUMEN_OPEN_HTTP_PROTOCOL'),
         'open_http2_protocol'      => env('SLUMEN_OPEN_HTTP2_PROTOCOL'),
@@ -75,5 +78,8 @@ return array(
         'open_mqtt_protocol'       => env('SLUMEN_OPEN_MQTT_PROTOCOL'),
         'reload_async'             => env('SLUMEN_RELOAD_ASYNC'),
         'tcp_fastopen'             => env('SLUMEN_TCP_FASTOPEN'),
+        'request_slowlog_file'     => env('SLUMEN_REQUEST_SLOWLOG_FILE'),
+        'enable_coroutine'         => env('SLUMEN_ENABLE_COROUTINE'),
+        'max_coroutine'            => env('SLUMEN_MAX_COROUTINE'),
     ],
 );
