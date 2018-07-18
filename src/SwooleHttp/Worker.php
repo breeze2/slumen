@@ -24,7 +24,7 @@ class Worker
         $this->id     = $worker_id;
         $this->server = $server;
         $this->config = $config;
-        $this->loadApplication();
+        $this->app = app();
         $this->makeLogger();
     }
 
@@ -164,13 +164,6 @@ class Worker
             'STATUS'          => $status,
             'BODY_BYTES_SENT' => $body_bytes_sent,
         ));
-    }
-
-    protected function loadApplication()
-    {
-        unset($this->app);
-        $bootstrap = $this->config['bootstrap'];
-        $this->app = require $bootstrap;
     }
 
     public function logHttpAccess(array $request_server, array $meta)

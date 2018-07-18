@@ -9,23 +9,15 @@ class Service
     protected $server;
     protected $worker;
     protected $config;
-    protected $setting;
     protected $hook;
 
-    public function __construct(array $config, array $setting)
+    public function __construct(array $config)
     {
-        $this->config  = $config;
-        $this->setting = $setting;
-
+        $this->config = $config;
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
-        if (isset($setting) && !empty($setting)) {
-            $this->server->set($setting);
+        if (array_key_exists('swoole_server', $config) && is_array($config['swoole_server'])) {
+            $this->server->set($config['swoole_server']);
         }
-    }
-
-    public static function globalHelpers()
-    {
-        require_once __DIR__.'/helpers.php';
     }
 
     public function start()

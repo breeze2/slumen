@@ -10,19 +10,23 @@ class Command
 
     protected $bootstrap;
     protected $config;
-    protected $setting;
     protected $pidFile;
 
     private function __construct()
     {
+        self::globalHelpers();
         if ($this->checkBootstrap()) {
             require $this->bootstrap;
             $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/config.php');
             $this->config  = $this->initializeConfig();
-            $this->setting = $this->initializeSetting();
             $this->pidFile = $this->config['pid_file'];
         }
 
+    }
+
+    public static function globalHelpers()
+    {
+        require_once __DIR__ . '/helpers.php';
     }
 
     private function checkBootstrap($file = self::DEFAULT_BOOTSTRAP_FILE_NAME)
@@ -47,37 +51,11 @@ class Command
         $app['config']->set($key, array_merge(require $path, $config));
     }
 
-    private function initializeSetting()
-    {
-        $app     = app();
-        $slumen  = $app['config']->get(self::CONFIG_KEY, []);
-        $setting = $slumen['swoole_server'];
-
-        return $setting;
-    }
-
     private function initializeConfig()
     {
         $app    = app();
         $slumen = $app['config']->get(self::CONFIG_KEY, []);
-
-        $config                     = array();
-        $config['running_mode']     = $slumen['running_mode'];
-        $config['socket_type']      = $slumen['socket_type'];
-        $config['host']             = $slumen['host'];
-        $config['port']             = $slumen['port'];
-        $config['gzip']             = $slumen['gzip'];
-        $config['gzip_min_length']  = $slumen['gzip_min_length'];
-        $config['static_resources'] = $slumen['static_resources'];
-        $config['pid_file']         = $slumen['pid_file'];
-        $config['stats_uri']        = $slumen['stats_uri'];
-        $config['http_log_path']    = $slumen['http_log_path'];
-        $config['http_log_path']    = $config['http_log_path'] ? realpath($config['http_log_path']) : false;
-        $config['http_log_single']  = $slumen['http_log_single'];
-        $config['root_dir']         = $slumen['root_dir'];
-        $config['public_dir']       = $slumen['public_dir'];
-        $config['service_hook']     = $slumen['service_hook'];
-
+        $config = $slumen;
         $config['bootstrap'] = $this->bootstrap;
 
         return $config;
@@ -124,8 +102,7 @@ class Command
             exit(1);
         }
 
-        Service::globalHelpers();
-        $service = new Service($this->config, $this->setting);
+        $service = new Service($this->config);
         $service->start();
     }
 
