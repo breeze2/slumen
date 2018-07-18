@@ -23,6 +23,11 @@ class Service
         }
     }
 
+    public static function globalHelpers()
+    {
+        require_once __DIR__.'/helpers.php';
+    }
+
     public function start()
     {
         $this->makeHook($this->config['service_hook']);

@@ -23,7 +23,7 @@ return array(
     /*
     Swoole Http Server
      */
-    'swoole_server'    => [
+    'swoole_server'    => array(
         'worker_num'               => env('SLUMEN_WORKER_NUM', 1),
         'max_request'              => env('SLUMEN_MAX_REQUEST', 0),
         'daemonize'                => env('SLUMEN_DAEMONIZE', true),
@@ -81,5 +81,9 @@ return array(
         'request_slowlog_file'     => env('SLUMEN_REQUEST_SLOWLOG_FILE'),
         'enable_coroutine'         => env('SLUMEN_ENABLE_COROUTINE'),
         'max_coroutine'            => env('SLUMEN_MAX_COROUTINE'),
-    ],
+
+        'upload_tmp_dir'           => env('SLUMEN_UPLOAD_TMP_DIR'),
+        'http_parse_post'          => env('SLUMEN_HTTP_PARSE_POST'),
+        'document_root'            => env('SLUMEN_DOCUMENT_ROOT'),
+    ),
 );

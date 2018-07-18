@@ -124,6 +124,7 @@ class Command
             exit(1);
         }
 
+        Service::globalHelpers();
         $service = new Service($this->config, $this->setting);
         $service->start();
     }
