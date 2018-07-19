@@ -83,7 +83,9 @@ class Worker
 
     protected function sendStatsJson(Request $request, Response $response)
     {
-        $stats = json_encode($this->server->stats());
+        $data              = $this->server->stats();
+        $data['worker_id'] = $this->id;
+        $stats             = json_encode($data);
         $response->header('Content-Type', 'application/json');
         $response->end($stats);
 

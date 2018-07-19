@@ -58,6 +58,7 @@ class Service
     public function onWorkerStart($server, $worker_id)
     {
         $this->worker = new Worker($server, $worker_id);
+        $this->worker->initialize($this->config);
         $this->worker->setHandler($this->handler);
         $this->worker->setLogger($this->makeLogger($worker_id));
 

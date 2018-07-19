@@ -18,8 +18,6 @@ return [
     'root_dir'         => base_path(),
     'public_dir'       => base_path('public'),
 
-    'service_hook'     => env('SLUMEN_SERVICE_HOOK'),
-
     /*
     Swoole Http Server
      */
