@@ -40,12 +40,12 @@ class Worker
         $this->gzip_min_length  = $config['gzip_min_length'];
     }
 
-    protected function setHandler(Handler $handler = null)
+    public function setHandler(Handler $handler = null)
     {
         $this->handler = $handler;
     }
 
-    protected function setLogger(Logger $logger = null)
+    public function setLogger(Logger $logger = null)
     {
         $this->logger = $loger;
     }
