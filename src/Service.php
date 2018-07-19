@@ -2,6 +2,7 @@
 namespace BL\Slumen;
 
 use BL\Slumen\SwooleHttp\Handler;
+use BL\Slumen\SwooleHttp\Logger;
 use BL\Slumen\SwooleHttp\Worker;
 use Exception;
 use swoole_http_server as SwooleHttpServer;
@@ -109,8 +110,7 @@ class Service
         } catch (Exception $error) {
             // do nothing
         }
-        app()->singleton(self::PROVIDER_HANDLER, Handler::class);
-        return app(self::PROVIDER_HANDLER);
+        return new Handler();
     }
 
 }

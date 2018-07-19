@@ -6,7 +6,7 @@ use Closure;
 
 class Handler
 {
-    const METHOD_HANDLE = 'hanlde';
+    const METHOD_HANDLE = 'handle';
 
     protected $onServerStarted;
 

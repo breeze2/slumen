@@ -47,7 +47,7 @@ class Worker
 
     public function setLogger(Logger $logger = null)
     {
-        $this->logger = $loger;
+        $this->logger = $logger;
     }
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
