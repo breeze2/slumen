@@ -1,15 +1,19 @@
 <?php
 namespace BL\Slumen;
 
+use BL\Slumen\SwooleHttp\Handler;
 use BL\Slumen\SwooleHttp\Worker;
+use Exception;
 use swoole_http_server as SwooleHttpServer;
 
 class Service
 {
+    const PROVIDER_HANDLER = 'SlumenHandler';
+
     protected $server;
     protected $worker;
     protected $config;
-    protected $hook;
+    protected $handler;
 
     public function __construct(array $config)
     {
@@ -22,14 +26,14 @@ class Service
 
     public function start()
     {
-        $this->makeHook($this->config['service_hook']);
+        $this->handler = $this->makeHandler();
 
-        $this->server->on('start', array($this, 'onStart'));
-        $this->server->on('shutdown', array($this, 'onShutdown'));
-        $this->server->on('workerStart', array($this, 'onWorkerStart'));
-        $this->server->on('workerStop', array($this, 'onWorkerStop'));
-        $this->server->on('workerError', array($this, 'onWorkerError'));
-        $this->server->on('request', array($this, 'onRequest'));
+        $this->server->on('start', [$this, 'onStart']);
+        $this->server->on('shutdown', [$this, 'onShutdown']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        $this->server->on('workerStop', [$this, 'onWorkerStop']);
+        $this->server->on('workerError', [$this, 'onWorkerError']);
+        $this->server->on('request', [$this, 'onRequest']);
 
         $this->server->start();
     }
@@ -39,7 +43,7 @@ class Service
         $file = $this->config['pid_file'];
         file_put_contents($file, $server->master_pid);
 
-        $this->hook && $this->hook->startedHandle($server);
+        $this->handler->handle('onServerStarted', [$server]);
     }
 
     public function onShutdown($server)
@@ -47,50 +51,66 @@ class Service
         $file = $this->config['pid_file'];
         unlink($file);
 
-        $this->hook && $this->hook->stoppedHandle($server);
+        $this->handler->handle('onServerStopped', [$server]);
     }
 
     public function onWorkerStart($server, $worker_id)
     {
-        $this->worker = new Worker($server, $worker_id, $this->config);
-        if ($this->hook) {
-            $this->worker->setServiceHook($this->hook);
-            $this->hook->workerStartedHandle($server, $worker_id);
-        }
+        $this->worker = new Worker($server, $worker_id);
+        $this->worker->setHandler($this->handler);
+        $this->worker->setLogger($this->makeLogger($worker_id));
+
+        $this->handler->handle('onWorkerStarted', [$server, $worker_id]);
     }
 
     public function onWorkerStop($server, $worker_id)
     {
         unset($this->worker);
 
-        $this->hook && $this->hook->workerStoppedHandle($server, $worker_id);
+        $this->handler->handle('onWorkerStopped', [$server, $worker_id]);
     }
 
     public function onWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal)
     {
-        $this->hook && $this->hook->workerErrorHandle($server, $worker_id, $worker_pid, $exit_code, $signal);
+        $this->handler->handle('onWorkerError', [$server, $worker_id, $worker_pid, $exit_code, $signal]);
     }
 
     public function onRequest($request, $response)
     {
-        if ($this->hook) {
-            if ($this->hook->requestedHandle($request, $response) === false) {
-                return false;
-            }
+        if ($this->handler->handle('onRequested', [$request, $response]) === false) {
+            return false;
         }
 
-        $flag = $this->worker->handle($request, $response);
-        $flag && $this->hook && $this->hook->respondedHandle($request, $response);
+        if ($this->worker->handle($request, $response) !== false) {
+            $this->handler->handle('onResponded', [$request, $response]);
+        }
     }
 
-    protected function makeHook($class)
+    protected function makeLogger($worker_id)
     {
-        if ($class && class_exists($class)) {
-            $hook = new $class;
-            if ($hook instanceof ServiceHook) {
-                $this->hook = $hook;
-            }
+        $http_log_path = $this->config['http_log_path'];
+        if ($http_log_path) {
+            $http_log_single = $this->config['http_log_single'];
+            $file_name       = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $worker_id . '.log';
+
+            $file = $http_log_path . '/' . $file_name;
+            return new Logger($file, $http_log_single);
         }
+        return null;
+    }
+
+    protected function makeHandler()
+    {
+        try {
+            $handler = app(self::PROVIDER_HANDLER);
+            if ($handler instanceof Handler) {
+                return $handler;
+            }
+        } catch (Exception $error) {
+            // do nothing
+        }
+        app()->singleton(self::PROVIDER_HANDLER, Handler::class);
+        return app(self::PROVIDER_HANDLER);
     }
 
 }

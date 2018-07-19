@@ -24,14 +24,14 @@ class Request
     {
         $this->request = $request;
 
-        $this->get    = isset($request->get) ? $request->get : array();
-        $this->post   = isset($request->post) ? $request->post : array();
-        $this->files  = isset($request->files) ? $request->files : array();
-        $this->cookie = isset($request->cookie) ? $request->cookie : array();
+        $this->get    = isset($request->get) ? $request->get : [];
+        $this->post   = isset($request->post) ? $request->post : [];
+        $this->files  = isset($request->files) ? $request->files : [];
+        $this->cookie = isset($request->cookie) ? $request->cookie : [];
 
-        $this->server  = array();
-        $this->header  = array();
-        $this->fastcgi = array();
+        $this->server  = [];
+        $this->header  = [];
+        $this->fastcgi = [];
         $this->content = $request->rawContent() ?: null;
 
         foreach ($request->server as $key => $value) {
@@ -89,7 +89,7 @@ class Request
 
 function str_to_upper($subject)
 {
-    static $search  = array('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '-');
-    static $replace = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_');
+    static $search  = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '-'];
+    static $replace = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_'];
     return str_replace($search, $replace, $subject);
 }

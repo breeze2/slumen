@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
 
     'running_mode'     => constant(env('SLUMEN_RUNNING_MODE', 'SWOOLE_PROCESS')),
     'socket_type'      => constant(env('SLUMEN_SOCKET_TYPE', 'SWOOLE_SOCK_TCP')),
@@ -23,7 +23,7 @@ return array(
     /*
     Swoole Http Server
      */
-    'swoole_server'    => array(
+    'swoole_server'    => [
         'worker_num'               => env('SLUMEN_WORKER_NUM', 1),
         'max_request'              => env('SLUMEN_MAX_REQUEST', 0),
         'daemonize'                => env('SLUMEN_DAEMONIZE', true),
@@ -85,5 +85,5 @@ return array(
         'upload_tmp_dir'           => env('SLUMEN_UPLOAD_TMP_DIR'),
         'http_parse_post'          => env('SLUMEN_HTTP_PARSE_POST'),
         'document_root'            => env('SLUMEN_DOCUMENT_ROOT'),
-    ),
-);
+    ],
+];

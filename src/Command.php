@@ -53,9 +53,9 @@ class Command
 
     private function initializeConfig()
     {
-        $app    = app();
-        $slumen = $app['config']->get(self::CONFIG_KEY, []);
-        $config = $slumen;
+        $app                 = app();
+        $slumen              = $app['config']->get(self::CONFIG_KEY, []);
+        $config              = $slumen;
         $config['bootstrap'] = $this->bootstrap;
 
         return $config;

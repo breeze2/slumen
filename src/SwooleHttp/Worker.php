@@ -11,40 +11,43 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Worker
 {
-    protected $id           = null;
-    protected $server       = null;
-    protected $logger       = null;
-    protected $config       = null;
-    protected $service_hook = null;
+    protected $id      = null;
+    protected $server  = null;
+    protected $logger  = null;
+    protected $handler = null;
 
     public $app = null;
 
-    public function __construct(SwooleHttpServer $server, $worker_id, array $config)
+    private $stats_uri;
+    private $static_resources;
+    private $public_dir;
+    private $gzip;
+    private $gzip_min_length;
+
+    public function __construct(SwooleHttpServer $server, $worker_id)
     {
         $this->id     = $worker_id;
         $this->server = $server;
-        $this->config = $config;
-        $this->app = app();
-        $this->makeLogger();
+        $this->app    = app();
     }
 
-    public function setServiceHook($service_hook)
+    public function initialize(array $config)
     {
-        $this->service_hook = $service_hook;
+        $this->stats_uri        = $config['stats_uri'];
+        $this->static_resources = $config['static_resources'];
+        $this->public_dir       = $config['public_dir'];
+        $this->gzip             = $config['gzip'];
+        $this->gzip_min_length  = $config['gzip_min_length'];
     }
 
-    public function makeLogger()
+    protected function setHandler(Handler $handler = null)
     {
-        // unset($this->logger);
-        $this->logger = null;
-        $http_log_path = $this->config['http_log_path'];
-        if ($http_log_path) {
-            $http_log_single = $this->config['http_log_single'];
-            $file_name       = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $this->id . '.log';
+        $this->handler = $handler;
+    }
 
-            $file         = $http_log_path . '/' . $file_name;
-            $this->logger = new Logger($file, $http_log_single);
-        }
+    protected function setLogger(Logger $logger = null)
+    {
+        $this->logger = $loger;
     }
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
@@ -52,13 +55,13 @@ class Worker
         $request  = new Request($req);
         $response = new Response($res);
 
-        if ($this->config['stats_uri'] && $request->server['REQUEST_URI'] === $this->config['stats_uri']) {
+        if ($this->stats_uri && $request->server['REQUEST_URI'] === $this->stats_uri) {
             if ($this->sendStatsJson($request, $response)) {
                 return true;
             }
         }
 
-        if ($this->config['static_resources'] && $request->server['REQUEST_METHOD'] === 'GET') {
+        if ($this->static_resources && $request->server['REQUEST_METHOD'] === 'GET') {
             if ($this->sendStaticResource($request, $response)) {
                 return true;
             }
@@ -68,7 +71,7 @@ class Worker
             $this->sendLumenResponse($request, $response);
             return true;
         } catch (ErrorException $e) {
-            $this->logServerError($e);
+            $this->logAppError($e);
         }
         return false;
     }
@@ -84,16 +87,16 @@ class Worker
         $response->header('Content-Type', 'application/json');
         $response->end($stats);
 
-        $this->logHttpAccess($request->server, array(
+        $this->logHttpAccess($request->server, [
             'STATUS'          => 200,
             'BODY_BYTES_SENT' => strlen($stats),
-        ));
+        ]);
         return true;
     }
 
     protected function sendStaticResource(Request $request, Response $response)
     {
-        $public_dir = $this->config['public_dir'];
+        $public_dir = $this->public_dir;
         $uri        = $request->server['REQUEST_URI'];
         $file       = realpath($public_dir . $uri);
         $status     = 200;
@@ -108,10 +111,10 @@ class Worker
                 $response->header('Content-Type', mime_content_type($file));
                 $response->sendFile($file);
             }
-            $this->logHttpAccess($request->server, array(
+            $this->logHttpAccess($request->server, [
                 'STATUS'          => $status,
                 'BODY_BYTES_SENT' => $status === 200 ? filesize($file) : 0,
-            ));
+            ]);
             return true;
         }
         return false;
@@ -142,10 +145,10 @@ class Worker
             $body_bytes_sent = strlen($content);
 
             // gzip handle
-            $accept_gzip = $this->config['gzip'] > 0 && isset($request->header['HTTP_ACCEPT_ENCODING']) && stripos($request->header['HTTP_ACCEPT_ENCODING'], 'gzip') !== false;
+            $accept_gzip = $this->gzip > 0 && isset($request->header['HTTP_ACCEPT_ENCODING']) && stripos($request->header['HTTP_ACCEPT_ENCODING'], 'gzip') !== false;
 
-            if ($accept_gzip && $body_bytes_sent > $this->config['gzip_min_length'] && $response->checkGzipMime()) {
-                $response->gzip($this->config['gzip']);
+            if ($accept_gzip && $body_bytes_sent > $this->gzip_min_length && $response->checkGzipMime()) {
+                $response->gzip($this->gzip);
             }
 
             $response->end($content);
@@ -160,10 +163,10 @@ class Worker
             $response->end($content);
         }
 
-        $this->logHttpAccess($request->server, array(
+        $this->logHttpAccess($request->server, [
             'STATUS'          => $status,
             'BODY_BYTES_SENT' => $body_bytes_sent,
-        ));
+        ]);
     }
 
     public function logHttpAccess(array $request_server, array $meta)
@@ -175,12 +178,10 @@ class Worker
         }
     }
 
-    public function logServerError(ErrorException $e)
+    public function logAppError(ErrorException $e)
     {
-        if ($this->service_hook) {
-            if ($this->service_hook->serverErrorHandle($e) === false) {
-                return false;
-            }
+        if ($this->handler && $this->handler->handle('onAppError', [$e]) === false) {
+            return false;
         }
 
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
