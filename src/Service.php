@@ -108,7 +108,7 @@ class Service
             if ($handler instanceof Handler) {
                 return $handler;
             }
-        } catch (Exception $error) {
+        } catch (Exception $e) {
             // do nothing
         }
         return new Handler();
