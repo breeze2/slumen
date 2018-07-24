@@ -1,6 +1,6 @@
 <?php
 
-namespace BL\Slumen\SwooleHttp;
+namespace BL\Slumen\Http;
 
 use swoole_http_response as SwooleHttpResponse;
 

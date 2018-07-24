@@ -1,6 +1,6 @@
 <?php
 
-namespace BL\Slumen\SwooleHttp;
+namespace BL\Slumen\Http;
 
 use Illuminate\Http\Request as IlluminateHttpRequest;
 use swoole_http_request as SwooleHttpRequest;

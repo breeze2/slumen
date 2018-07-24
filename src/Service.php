@@ -1,9 +1,9 @@
 <?php
 namespace BL\Slumen;
 
-use BL\Slumen\SwooleHttp\Handler;
-use BL\Slumen\SwooleHttp\Logger;
-use BL\Slumen\SwooleHttp\Worker;
+use BL\Slumen\Http\Handler;
+use BL\Slumen\Http\Logger;
+use BL\Slumen\Http\Worker;
 use Exception;
 use swoole_http_server as SwooleHttpServer;
 

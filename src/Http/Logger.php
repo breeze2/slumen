@@ -1,6 +1,6 @@
 <?php
 
-namespace BL\Slumen\SwooleHttp;
+namespace BL\Slumen\Http;
 
 class Logger
 {
