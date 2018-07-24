@@ -17,7 +17,7 @@ class Command
         self::globalHelpers();
         if ($this->checkBootstrap()) {
             require $this->bootstrap;
-            $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/config.php');
+            $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/slumen.php');
             $this->config  = $this->initializeConfig();
             $this->pidFile = $this->config['pid_file'];
         }
