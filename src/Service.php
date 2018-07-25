@@ -10,11 +10,13 @@ use swoole_http_server as SwooleHttpServer;
 class Service
 {
     const PROVIDER_HOOK = 'SlumenHook';
+    const PROVIDER_MYSQL_POOL = 'SlumenMySqlPool';
 
     protected $server;
     protected $worker;
     protected $config;
     protected $handler;
+    protected $mysql_manager;
 
     public function __construct(array $config)
     {
@@ -28,6 +30,7 @@ class Service
     public function start()
     {
         $this->handler = $this->makeHandler();
+        $this->mysql_manager = $this->makeMySqlManager();
 
         $this->server->on('start', [$this, 'onStart']);
         $this->server->on('shutdown', [$this, 'onShutdown']);
@@ -45,6 +48,7 @@ class Service
         file_put_contents($file, $server->master_pid);
 
         $this->handler->handle('onServerStarted', [$server]);
+        $this->mysql_manager && $this->mysql_manager->autoRecover(config('slumen.db_pool.wait_timeout'), config('slumen.db_pool.checking_interval')); 
     }
 
     public function onShutdown($server)
@@ -112,6 +116,18 @@ class Service
             // do nothing
         }
         return new Handler();
+    }
+
+    protected function makeMySqlManager()
+    {
+        try {
+            $mysql_pool = app(self::PROVIDER_MYSQL_POOL);
+            $mysql_manager = $mysql_pool->getPdo();
+            return $mysql_manager;
+        } catch (Exception $e) {
+            // do nothing
+        }
+        return null;
     }
 
 }
