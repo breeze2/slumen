@@ -6,14 +6,14 @@ use Swoole\Coroutine\MySQL;
 class CoMySqlClient extends MySQL
 {
     protected $last_used_at;
-    protected $fetch_mode;
+    protected $is_fetch_mode;
 
     public function connect(array $server_info)
     {
         if (array_key_exists('fetch_mode', $server_info)) {
-            $this->fetch_mode = !!$server_info['fetch_mode'];
+            $this->is_fetch_mode = !!$server_info['fetch_mode'];
         } else {
-            $this->fetch_mode = false;
+            $this->is_fetch_mode = false;
         }
         return parent::connect($server_info);
     }
@@ -35,7 +35,12 @@ class CoMySqlClient extends MySQL
 
     public function isFetchMode()
     {
-        return $this->fetch_mode;
+        return $this->is_fetch_mode;
+    }
+
+    public function affectedRowCount()
+    {
+        return $this->affected_rows;
     }
 
     public function runSql($query, array $bindings = [])
