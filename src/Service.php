@@ -1,6 +1,7 @@
 <?php
 namespace BL\Slumen;
 
+use BL\Slumen\Database\CoMySqlPoolConnection;
 use BL\Slumen\Http\Handler;
 use BL\Slumen\Http\Logger;
 use BL\Slumen\Http\Worker;
@@ -122,8 +123,10 @@ class Service
     {
         try {
             $mysql_pool = app(self::PROVIDER_MYSQL_POOL);
-            $mysql_manager = $mysql_pool->getPdo();
-            return $mysql_manager;
+            if($mysql_pool instanceof CoMySqlPoolConnection) {
+                $mysql_manager = $mysql_pool->getPdo();
+                return $mysql_manager;
+            }
         } catch (Exception $e) {
             // do nothing
         }
