@@ -44,6 +44,22 @@ class CoMySqlPoolConnection extends MySqlConnection
         });
     }
 
+    public function statement($query, $bindings = [])
+    {
+        return $this->run($query, $bindings, function ($query, $bindings) {
+            if ($this->pretending()) {
+                return true;
+            }
+
+            $bindings = $this->prepareBindings($bindings);
+            $client = $this->pdo->pop();
+            $result = $client->runSql($query, $bindings);
+            $this->recordsHaveBeenModified();
+            $this->pdo->push($client);
+            return $result;
+        });
+    }
+
     public function autoRecycling($timeout, $sleep) {
     	$this->pdo->autoRecycling($timeout, $sleep);
     }

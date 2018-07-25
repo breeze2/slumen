@@ -38,4 +38,19 @@ class CoMySqlConnection extends MySqlConnection
             return $count;
         });
     }
+
+    public function statement($query, $bindings = [])
+    {
+        return $this->run($query, $bindings, function ($query, $bindings) {
+            if ($this->pretending()) {
+                return true;
+            }
+
+            $bindings = $this->prepareBindings($bindings);
+            $result = $this->pdo->runSql($query, $bindings);
+            $this->recordsHaveBeenModified();
+
+            return $result;
+        });
+    }
 }
