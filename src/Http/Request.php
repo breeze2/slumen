@@ -51,8 +51,12 @@ class Request
         $this->server['CONTENT_SIZE'] = strlen($this->content);
 
         // REMOTE_USER
-        if (!isset($this->server['REMOTE_USER']) && isset($this->header['HTTP_REMOTE_USER'])) {
+        if (isset($this->server['REMOTE_USER'])) {
+            // nothing
+        } else if (isset($this->header['HTTP_REMOTE_USER'])) {
             $this->server['REMOTE_USER'] = $this->header['HTTP_REMOTE_USER'];
+        } else {
+            $this->server['REMOTE_USER'] = '';
         }
 
         // HTTP_USER_AGENT
@@ -61,11 +65,15 @@ class Request
         // HTTP_REFERER
         if (isset($this->header['HTTP_REFERER'])) {
             $this->server['HTTP_REFERER'] = $this->header['HTTP_REFERER'];
+        } else {
+            $this->server['HTTP_REFERER'] = '';
         }
 
         // HTTP_X_FORWARDED_FOR
         if (isset($this->header['HTTP_X_FORWARDED_FOR'])) {
             $this->server['HTTP_X_FORWARDED_FOR'] = $this->header['HTTP_X_FORWARDED_FOR'];
+        } else {
+            $this->server['HTTP_X_FORWARDED_FOR'] = '';
         }
     }
 
@@ -86,4 +94,3 @@ class Request
     }
 
 }
-
