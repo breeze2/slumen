@@ -9,7 +9,7 @@ use swoole_http_server as SwooleHttpServer;
 
 class Service
 {
-    const PROVIDER_HANDLER = 'SlumenHandler';
+    const PROVIDER_HOOK = 'SlumenHook';
 
     protected $server;
     protected $worker;
@@ -104,7 +104,7 @@ class Service
     protected function makeHandler()
     {
         try {
-            $handler = app(self::PROVIDER_HANDLER);
+            $handler = app(self::PROVIDER_HOOK);
             if ($handler instanceof Handler) {
                 return $handler;
             }
