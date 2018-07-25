@@ -11,7 +11,7 @@ class CoMySqlManager
     protected $config;
     protected $channel;
     protected $numbser;
-    private $is_recovering = false;
+    private $is_recycling = false;
 
     public function __construct(array $config, $max_number = 120, $min_number = 0)
     {
@@ -97,10 +97,10 @@ class CoMySqlManager
         return $mysql;
     }
 
-    public function autoRecover($timeout = 120, $sleep = 20)
+    public function autoRecycling($timeout = 120, $sleep = 20)
     {
-        if (!$this->is_recovering) {
-            $this->is_recovering = true;
+        if (!$this->is_recycling) {
+            $this->is_recycling = true;
             while (1) {
                 Co::sleep($sleep);
                 if ($this->shouldRecover()) {

@@ -43,4 +43,8 @@ class CoMySqlPoolConnection extends MySqlConnection
             return $count;
         });
     }
+
+    public function autoRecycling($timeout, $sleep) {
+    	$this->pdo->autoRecycling($timeout, $sleep);
+    }
 }
