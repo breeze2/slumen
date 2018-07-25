@@ -18,6 +18,13 @@ return [
     'root_dir'         => base_path(),
     'public_dir'       => base_path('public'),
 
+    'db_pool'          => [
+        'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION') ?: env('SLUMEN_DB_POOL_MAX_CONN', 120),
+        'min_connection'    => env('SLUMEN_DB_POOL_MIN_CONNECTION') ?: env('SLUMEN_DB_POOL_MIN_CONN', 0),
+        'wait_timeout'      => env('SLUMEN_DB_POOL_WAIT_TIMEOUT', 120),
+        'checking_interval' => env('SLUMEN_DB_POOL_CHECKING_INTERVAL', 20),
+    ],
+
     /*
     Swoole Http Server
      */
@@ -26,12 +33,12 @@ return [
         'max_request'              => env('SLUMEN_MAX_REQUEST', 0),
         'daemonize'                => env('SLUMEN_DAEMONIZE', true),
         'log_file'                 => env('SLUMEN_LOG_FILE', storage_path('logs/slumen.log')),
-        'max_conn'                 => env('SLUMEN_MAX_CONN', 1024),
+        'max_connection'           => env('SLUMEN_MAX_CONNECTION') ?: env('SLUMEN_MAX_CONN', 1024),
 
         'reactor_num'              => env('SLUMEN_REACTOR_NUM'),
         // 'worker_num'               => env('SLUMEN_WORKER_NUM'),
         // 'max_request'              => env('SLUMEN_MAX_REQUEST'),
-        // 'max_connection'           => env('SLUMEN_MAX_CONNECTION'),
+        // 'max_conn'                 => env('SLUMEN_MAX_CONNECTION'),
         'task_worker_num'          => env('SLUMEN_TASK_WORKER_NUM'),
         'task_ipc_mode'            => env('SLUMEN_TASK_IPC_MODE'),
         'task_max_request'         => env('SLUMEN_TASK_MAX_REQUEST'),

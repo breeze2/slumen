@@ -15,6 +15,7 @@ class MySqlPoolServiceProvider extends ServiceProvider
             app('db');
             $config = app()['config']['database.connections.mysql'];
             if ($config) {
+                $db_pool = config('slumen.db_pool');
                 $pdo = new CoMySqlManager([
                     'host'        => $config['host'],
                     'port'        => $config['port'],
@@ -25,11 +26,10 @@ class MySqlPoolServiceProvider extends ServiceProvider
                     'strict_type' => $config['strict'],
                     'fetch_mode'  => false,
                     'timeout'     => -1,
-                ]);
+                ], $db_pool['max_connection'], $db_pool['min_connection']);
                 return new CoMySqlPoolConnection($pdo, $config['database'], $config['prefix'], $config);
             }
             return null;
         });
     }
-
 }

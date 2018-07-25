@@ -13,7 +13,7 @@ class CoMySqlManager
     protected $numbser;
     private $is_recovering = false;
 
-    public function __construct(array $config, $max_number = 150, $min_number = 50)
+    public function __construct(array $config, $max_number = 120, $min_number = 0)
     {
         $this->max_number = $max_number;
         $this->min_number = $min_number;
@@ -97,7 +97,7 @@ class CoMySqlManager
         return $mysql;
     }
 
-    public function autoRecover($timeout = 200, $sleep = 20)
+    public function autoRecover($timeout = 120, $sleep = 20)
     {
         if (!$this->is_recovering) {
             $this->is_recovering = true;
