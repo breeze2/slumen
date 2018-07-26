@@ -12,6 +12,7 @@ class CoMySqlManager
     protected $channel;
     protected $numbser;
     private $is_recycling = false;
+    private $last_insert_id = 0;
 
     public function __construct(array $config, $max_number = 120, $min_number = 0)
     {
@@ -114,6 +115,16 @@ class CoMySqlManager
                 }
             }
         }
+    }
+
+    public function getLastInsertId()
+    {
+        return $this->last_insert_id;
+    }
+
+    public function setLastInsertId($id)
+    {
+        $this->last_insert_id = $id;
     }
 
 }

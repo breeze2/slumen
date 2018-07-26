@@ -52,4 +52,9 @@ class CoMySqlClient extends MySQL
         }
         return json_decode(json_encode($result));
     }
+
+    public function lastInsertId()
+    {
+        return $this->insert_id;
+    }
 }

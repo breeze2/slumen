@@ -1,6 +1,7 @@
 <?php
 namespace BL\Slumen\Database;
 
+use BL\Slumen\Database\Query\Processors\MySqlProcessor;
 use Illuminate\Database\MySqlConnection;
 
 class CoMySqlPoolConnection extends MySqlConnection
@@ -8,6 +9,16 @@ class CoMySqlPoolConnection extends MySqlConnection
     public function __construct(CoMySqlManager $pdo, $database = '', $tablePrefix = '', array $config = [])
     {
         parent::__construct($pdo, $database, $tablePrefix, $config);
+    }
+
+    /**
+     * Get the default post processor instance.
+     *
+     * @return \BL\Slumen\Database\Query\Processors\MySqlProcessor
+     */
+    protected function getDefaultPostProcessor()
+    {
+        return new MySqlProcessor;
     }
 
     public function select($query, $bindings = [], $useReadPdo = true)
@@ -33,8 +44,8 @@ class CoMySqlPoolConnection extends MySqlConnection
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $client = $this->pdo->pop();
-            $result = $client->runSql($query, $bindings);
+            $client   = $this->pdo->pop();
+            $result   = $client->runSql($query, $bindings);
 
             $this->recordsHaveBeenModified(
                 ($count = $client->affectedRowCount()) > 0
@@ -52,15 +63,18 @@ class CoMySqlPoolConnection extends MySqlConnection
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $client = $this->pdo->pop();
-            $result = $client->runSql($query, $bindings);
+            $client   = $this->pdo->pop();
+            $result   = $client->runSql($query, $bindings);
+            $last_id  = $client->lastInsertId();
             $this->recordsHaveBeenModified();
             $this->pdo->push($client);
+            $this->pdo->setLastInsertId($last_id);
             return $result;
         });
     }
 
-    public function autoRecycling($timeout, $sleep) {
-    	$this->pdo->autoRecycling($timeout, $sleep);
+    public function autoRecycling($timeout, $sleep)
+    {
+        $this->pdo->autoRecycling($timeout, $sleep);
     }
 }
