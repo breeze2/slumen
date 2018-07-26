@@ -53,6 +53,13 @@ class CoMySqlClient extends MySQL
         return json_decode(json_encode($result));
     }
 
+    public function fetchSql($query, array $bindings = [])
+    {
+        $statement = $this->prepare($query);
+        $result    = $statement->execute($bindings);
+        return $statement;
+    }
+
     public function lastInsertId()
     {
         return $this->insert_id;

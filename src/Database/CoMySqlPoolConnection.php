@@ -36,6 +36,25 @@ class CoMySqlPoolConnection extends MySqlConnection
         });
     }
 
+    public function cursor($query, $bindings = [], $useReadPdo = true)
+    {
+        $statement = $this->run($query, $bindings, function ($query, $bindings) use ($useReadPdo) {
+            if ($this->pretending()) {
+                return [];
+            }
+
+            $bindings = $this->prepareBindings($bindings);
+            $client = $this->pdo->pop();
+            $statement = $client->fetchSql($query, $bindings);
+            $this->pdo->push($client);
+            return $statement;
+        });
+
+        while ($record = $statement->fetch()) {
+            yield json_encode(json_encode($record));
+        }
+    }
+
     public function affectingStatement($query, $bindings = [])
     {
         return $this->run($query, $bindings, function ($query, $bindings) {
