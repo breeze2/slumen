@@ -1,6 +1,9 @@
 <?php
 namespace BL\Slumen\Database\Query\Processors;
 
+use BL\Slumen\Database\CoMySqlClient;
+use BL\Slumen\Database\CoMySqlManager;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Processors\MySqlProcessor as Processor;
 
 class MySqlProcessor extends Processor
