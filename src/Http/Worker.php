@@ -48,7 +48,7 @@ class Worker
         try {
             $logger = app(HttpLoggerServiceProvider::PROVIDER_NAME);
             if ($logger instanceof Logger) {
-                $logger->initialize(['prefix' => $this->id]);
+                $logger->initialize(['worker_id' => $this->id]);
                 $logger->open();
                 return $logger;
             }

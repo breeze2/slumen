@@ -8,15 +8,15 @@ class Logger
     const FILE_PER_MONTH = 'Y-m';
     const FILE_PER_YEAR  = 'Y';
 
-    protected $stream    = null;
-    protected $path      = null;
-    protected $file_name = null;
+    protected $stream;
+    protected $path;
+    protected $file;
+    protected $file_name;
+    protected $file_per;
 
-    protected $single = null;
-
-    protected $prefix   = '';
-    protected $date     = '';
-    protected $file_per = '';
+    protected $single;
+    protected $prefix;
+    protected $date;
 
     private $is_opened = false;
 
@@ -36,14 +36,19 @@ class Logger
         if (array_key_exists('prefix', $config)) {
             $this->prefix = $config['prefix'];
         }
+        if (array_key_exists('worker_id', $config)) {
+            $this->single || $this->prefix .= $config['worker_id'] . '_';
+        }
+
     }
 
     public function open()
     {
-        if ($this->is_opened) {
+        if (!$this->is_opened) {
             $this->is_opened = true;
 
-            $file = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+            $file       = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+            $this->file = $file;
             $this->single ||
             $this->stream = fopen($file, 'a');
         }
@@ -61,14 +66,15 @@ class Logger
                     fclose($this->stream);
                     $this->date = $now;
 
-                    $file = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+                    $file       = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+                    $this->file = $file;
                     $this->single ||
                     $this->stream = fopen($file, 'a');
                 }
             }
             fwrite($this->stream, json_encode($data) . "\n");
         } else {
-            error_log(json_encode($data) . "\n", 3, $this->path . $this->file);
+            error_log(json_encode($data) . "\n", 3, $this->file);
         }
     }
 }
