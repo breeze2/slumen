@@ -3,12 +3,11 @@
     "description": "speed up lumen with swoole",
     "type": "library",
     "license": "MIT",
-    "version": "0.8.0",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Breeze",
-            "email": "805511939@qq.com",
-            "blog": "https://blog.breezelin.cn"
+            "email": "805511939@qq.com"
         }
     ],
     "minimum-stability": "stable",
@@ -24,5 +23,8 @@
     },
     "bin": [
         "bin/slumen"
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^7.2"
+    }
 }
