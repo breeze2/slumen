@@ -1,22 +1,24 @@
 <?php
 namespace BL\Slumen;
 
-use BL\Slumen\Database\CoMySqlPoolConnection;
-use BL\Slumen\Http\Handler;
+use BL\Slumen\Events\ServerRequested;
+use BL\Slumen\Events\ServerResponded;
+use BL\Slumen\Events\ServerStarted;
+use BL\Slumen\Events\ServerStopped;
+use BL\Slumen\Events\WorkerError;
+use BL\Slumen\Events\WorkerStarted;
+use BL\Slumen\Events\WorkerStopped;
 use BL\Slumen\Http\Logger;
 use BL\Slumen\Http\Worker;
-use Exception;
 use swoole_http_server as SwooleHttpServer;
 
 class Service
 {
-    const PROVIDER_HOOK = 'SlumenHook';
     const PROVIDER_MYSQL_POOL = 'SlumenMySqlPool';
 
     protected $server;
     protected $worker;
     protected $config;
-    protected $handler;
 
     public function __construct(array $config)
     {
@@ -29,8 +31,6 @@ class Service
 
     public function start()
     {
-        $this->handler = $this->makeHandler();
-
         $this->server->on('start', [$this, 'onStart']);
         $this->server->on('shutdown', [$this, 'onShutdown']);
         $this->server->on('workerStart', [$this, 'onWorkerStart']);
@@ -46,7 +46,7 @@ class Service
         $file = $this->config['pid_file'];
         file_put_contents($file, $server->master_pid);
 
-        $this->handler->handle('onServerStarted', [$server]);
+        event(new ServerStarted($server));
     }
 
     public function onShutdown($server)
@@ -54,39 +54,36 @@ class Service
         $file = $this->config['pid_file'];
         unlink($file);
 
-        $this->handler->handle('onServerStopped', [$server]);
+        event(new ServerStopped($server));
     }
 
     public function onWorkerStart($server, $worker_id)
     {
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
-        $this->worker->setHandler($this->handler);
         $this->worker->setLogger($this->makeLogger($worker_id));
 
-        $this->handler->handle('onWorkerStarted', [$server, $worker_id]);
+        event(new WorkerStarted($server, $worker_id));
     }
 
     public function onWorkerStop($server, $worker_id)
     {
         unset($this->worker);
 
-        $this->handler->handle('onWorkerStopped', [$server, $worker_id]);
+        event(new WorkerStopped($server, $worker_id));
     }
 
     public function onWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal)
     {
-        $this->handler->handle('onWorkerError', [$server, $worker_id, $worker_pid, $exit_code, $signal]);
+        event(new WorkerError($server, $worker_id, $worker_pid, $exit_code, $signal));
     }
 
     public function onRequest($request, $response)
     {
-        if ($this->handler->handle('onRequested', [$request, $response]) === false) {
-            return false;
-        }
+        event(new ServerRequested($request, $response));
 
         if ($this->worker->handle($request, $response) !== false) {
-            $this->handler->handle('onResponded', [$request, $response]);
+            event(new ServerResponded($request, $response));
         }
     }
 
@@ -101,19 +98,6 @@ class Service
             return new Logger($file, $http_log_single);
         }
         return null;
-    }
-
-    protected function makeHandler()
-    {
-        try {
-            $handler = app(self::PROVIDER_HOOK);
-            if ($handler instanceof Handler) {
-                return $handler;
-            }
-        } catch (Exception $e) {
-            // do nothing
-        }
-        return new Handler();
     }
 
 }

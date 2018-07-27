@@ -2,6 +2,7 @@
 
 namespace BL\Slumen\Http;
 
+use BL\Slumen\Events\AppError;
 use ErrorException;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
@@ -11,10 +12,9 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Worker
 {
-    protected $id      = null;
-    protected $server  = null;
-    protected $logger  = null;
-    protected $handler = null;
+    protected $id     = null;
+    protected $server = null;
+    protected $logger = null;
 
     public $app = null;
 
@@ -38,11 +38,6 @@ class Worker
         $this->public_dir       = $config['public_dir'];
         $this->gzip             = $config['gzip'];
         $this->gzip_min_length  = $config['gzip_min_length'];
-    }
-
-    public function setHandler(Handler $handler = null)
-    {
-        $this->handler = $handler;
     }
 
     public function setLogger(Logger $logger = null)
@@ -182,9 +177,7 @@ class Worker
 
     public function logAppError(ErrorException $e)
     {
-        if ($this->handler && $this->handler->handle('onAppError', [$e]) === false) {
-            return false;
-        }
+        event(new AppError($e));
 
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
         fwrite(STDOUT, sprintf('%s%s(%d): %s', $prefix, $e->getFile(), $e->getLine(), $e->getMessage()) . PHP_EOL);
