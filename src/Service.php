@@ -2,8 +2,8 @@
 namespace BL\Slumen;
 
 use BL\Slumen\Http\EventSubscriber;
-use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
 use BL\Slumen\Http\Worker;
+use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
 use swoole_http_server as SwooleHttpServer;
 
 class Service
@@ -26,6 +26,7 @@ class Service
 
     public function start()
     {
+        $this->publisher = $this->makePublisher();
         $this->server->on('start', [$this, 'onStart']);
         $this->server->on('shutdown', [$this, 'onShutdown']);
         $this->server->on('workerStart', [$this, 'onWorkerStart']);
