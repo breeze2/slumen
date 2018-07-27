@@ -1,13 +1,8 @@
 <?php
 namespace BL\Slumen;
 
-use BL\Slumen\Events\ServerRequested;
-use BL\Slumen\Events\ServerResponded;
-use BL\Slumen\Events\ServerStarted;
-use BL\Slumen\Events\ServerStopped;
-use BL\Slumen\Events\WorkerError;
-use BL\Slumen\Events\WorkerStarted;
-use BL\Slumen\Events\WorkerStopped;
+use BL\Slumen\Http\EventSubscriber;
+use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
 use BL\Slumen\Http\Worker;
 use swoole_http_server as SwooleHttpServer;
 
@@ -18,6 +13,7 @@ class Service
     protected $server;
     protected $worker;
     protected $config;
+    protected $publisher;
 
     public function __construct(array $config)
     {
@@ -45,7 +41,7 @@ class Service
         $file = $this->config['pid_file'];
         file_put_contents($file, $server->master_pid);
 
-        event(new ServerStarted($server));
+        $this->publisher && $this->publisher->publish('ServerStarted', [$server]);
     }
 
     public function onShutdown($server)
@@ -53,36 +49,49 @@ class Service
         $file = $this->config['pid_file'];
         unlink($file);
 
-        event(new ServerStopped($server));
+        $this->publisher && $this->publisher->publish('ServerStopped', [$server]);
     }
 
     public function onWorkerStart($server, $worker_id)
     {
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
-
-        event(new WorkerStarted($server, $worker_id));
+        $this->worker->setPublisher($this->publisher);
+        $this->publisher && $this->publisher->publish('WorkerStarted', [$server, $worker_id]);
     }
 
     public function onWorkerStop($server, $worker_id)
     {
         unset($this->worker);
 
-        event(new WorkerStopped($server, $worker_id));
+        $this->publisher && $this->publisher->publish('WorkerStopped', [$server, $worker_id]);
     }
 
     public function onWorkerError($server, $worker_id, $worker_pid, $exit_code, $signal)
     {
-        event(new WorkerError($server, $worker_id, $worker_pid, $exit_code, $signal));
+        $this->publisher && $this->publisher->publish('WorkerError', [$server, $worker_id, $worker_pid, $exit_code, $signal]);
     }
 
     public function onRequest($request, $response)
     {
-        event(new ServerRequested($request, $response));
+        $this->publisher && $this->publisher->publish('ServerRequested', [$request, $response]);
 
         if ($this->worker->handle($request, $response) !== false) {
-            event(new ServerResponded($request, $response));
+            $this->publisher && $this->publisher->publish('ServerResponded', [$request, $response]);
         }
+    }
+
+    protected function makePublisher()
+    {
+        try {
+            $publisher = app(HttpEventSubscriberServiceProvider::PROVIDER_NAME);
+            if ($publisher instanceof EventSubscriber) {
+                return $publisher;
+            }
+        } catch (Exception $e) {
+            // do nothing
+        }
+        return null;
     }
 
 }

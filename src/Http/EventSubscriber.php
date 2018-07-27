@@ -34,21 +34,21 @@ class EventSubscriber
 
     public function subscribe()
     {
-        $this->events['AppErrorEvent'] ='onAppError';
+        $this->events['AppError'] ='onAppError';
 
-        $this->events['ServerRequestedEvent'] ='onServerRequested';
+        $this->events['ServerRequested'] ='onServerRequested';
 
-        $this->events['ServerRespondedEvent'] ='onServerResponded';
+        $this->events['ServerResponded'] ='onServerResponded';
 
-        $this->events['ServerStartedEvent'] ='onServerStarted';
+        $this->events['ServerStarted'] ='onServerStarted';
 
-        $this->events['ServerStoppedEvent'] ='onServerStopped';
+        $this->events['ServerStopped'] ='onServerStopped';
 
-        $this->events['WorkerErrorEvent'] ='onWorkerError';
+        $this->events['WorkerError'] ='onWorkerError';
 
-        $this->events['WorkerStartedEvent'] ='onWorkerStarted';
+        $this->events['WorkerStarted'] ='onWorkerStarted';
 
-        $this->events['WorkerStoppedEvent'] ='onWorkerStopped';
+        $this->events['WorkerStopped'] ='onWorkerStopped';
     }
 
     public function publish($event, array $params = [])

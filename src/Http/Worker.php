@@ -13,11 +13,12 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Worker
 {
-    public $app = null;
+    public $app;
 
-    protected $id     = null;
-    protected $server = null;
-    protected $logger = null;
+    protected $id;
+    protected $server;
+    protected $logger;
+    protected $publisher;
 
     private $stats_uri;
     private $static_resources;
@@ -47,7 +48,7 @@ class Worker
         try {
             $logger = app(HttpLoggerServiceProvider::PROVIDER_NAME);
             if ($logger instanceof Logger) {
-                $logger->initialize(['prefix'=> $this->id]);
+                $logger->initialize(['prefix' => $this->id]);
                 $logger->open();
                 return $logger;
             }
@@ -55,6 +56,11 @@ class Worker
             // do nothing
         }
         return null;
+    }
+
+    public function setPublisher(EventSubscriber $subscriber)
+    {
+        $this->publisher = $subscriber;
     }
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
@@ -189,7 +195,7 @@ class Worker
 
     public function logAppError(Exception $e)
     {
-        event(new AppError($e));
+        $this->publisher && $this->publisher->publish('AppError', [$e]);
 
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
         fwrite(STDOUT, sprintf('%s%s(%d): %s', $prefix, $e->getFile(), $e->getLine(), $e->getMessage()) . PHP_EOL);
