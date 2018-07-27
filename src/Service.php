@@ -56,7 +56,7 @@ class Service
     {
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
-        $this->worker->setPublisher($this->publisher);
+        $this->publisher && $this->worker->setPublisher($this->publisher);
         $this->publisher && $this->publisher->publish('WorkerStarted', [$server, $worker_id]);
     }
 

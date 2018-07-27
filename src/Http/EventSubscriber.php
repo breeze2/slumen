@@ -53,8 +53,8 @@ class EventSubscriber
 
     public function publish($event, array $params = [])
     {
-        if(array_key_exists($event, $this->events) && method_exists($this, $this->events['event'])) {
-            return call_user_func_array([$this, $this->events['event']], $params);
+        if(array_key_exists($event, $this->events) && method_exists($this, $this->events[$event])) {
+            return call_user_func_array([$this, $this->events[$event]], $params);
         }
     }
 }
