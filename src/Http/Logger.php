@@ -2,46 +2,73 @@
 
 namespace BL\Slumen\Http;
 
-use Monolog\Logger as MonoLogger;
-
-class Logger extends MonoLogger
+class Logger
 {
-    // protected $stream = null;
-    // protected $file   = null;
+    const FILE_PER_DAY   = 'Y-m-d';
+    const FILE_PER_MONTH = 'Y-m';
+    const FILE_PER_YEAR  = 'Y';
 
-    // public function __construct($file, $single)
-    // {
-    //     $this->file   = $file;
-    //     $single || $this->stream = fopen($this->file, 'a');
-    // }
+    protected $stream    = null;
+    protected $path      = null;
+    protected $file_name = null;
 
-    // public function accessJSON(array $data)
-    // {
-    //     if($this->stream) {
-    //         fwrite($this->stream, json_encode($data) . "\n");
-    //     } else {
-    //         error_log(json_encode($data) . "\n", 3, $this->file);
-    //     }
-    // }
+    protected $single = null;
+
+    protected $prefix   = '';
+    protected $date     = '';
+    protected $file_per = '';
+
+    private $is_opened = false;
+
+    public function __construct($path, $file_name, $single)
+    {
+        $this->path      = $path;
+        $this->file_name = $file_name;
+        $this->single    = $single;
+    }
+
+    public function initialize(array $config)
+    {
+        if (array_key_exists('file_per', $config)) {
+            $this->file_per = $config['file_per'];
+            $this->date     = date($this->file_per);
+        }
+        if (array_key_exists('prefix', $config)) {
+            $this->prefix = $config['prefix'];
+        }
+    }
+
+    public function open()
+    {
+        if ($this->is_opened) {
+            $this->is_opened = true;
+
+            $file = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+            $this->single ||
+            $this->stream = fopen($file, 'a');
+        }
+    }
+
     public function addAccessInfo(array $data)
     {
-        $record = $data;
-        if (!$this->handlers) {
-            return false;
+        if (!$this->is_opened) {
+            return;
         }
+        if ($this->stream) {
+            if ($this->date) {
+                $now = date($this->file_per);
+                if ($this->date !== $now) {
+                    fclose($this->stream);
+                    $this->date = $now;
 
-        foreach ($this->processors as $processor) {
-            $record = call_user_func($processor, $record);
-        }
-
-        while ($handler = current($this->handlers)) {
-            if (true === $handler->handle($record)) {
-                break;
+                    $file = $this->path . '/' . $this->prefix . $this->date . $this->file_name;
+                    $this->single ||
+                    $this->stream = fopen($file, 'a');
+                }
             }
-
-            next($this->handlers);
+            fwrite($this->stream, json_encode($data) . "\n");
+        } else {
+            error_log(json_encode($data) . "\n", 3, $this->path . $this->file);
         }
-
-        return true;
     }
 }

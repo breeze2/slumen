@@ -4,7 +4,7 @@ namespace BL\Slumen\Http;
 
 use BL\Slumen\Events\AppError;
 use BL\Slumen\Provider\HttpLoggerServiceProvider;
-use ErrorException;
+use Exception;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
 use swoole_http_server as SwooleHttpServer;
@@ -47,6 +47,8 @@ class Worker
         try {
             $logger = app(HttpLoggerServiceProvider::PROVIDER_NAME);
             if ($logger instanceof Logger) {
+                $logger->initialize(['prefix'=> $this->id]);
+                $logger->open();
                 return $logger;
             }
         } catch (Exception $e) {
@@ -75,7 +77,7 @@ class Worker
         try {
             $this->sendLumenResponse($request, $response);
             return true;
-        } catch (ErrorException $e) {
+        } catch (Exception $e) {
             $this->logAppError($e);
         }
         return false;
@@ -185,7 +187,7 @@ class Worker
         }
     }
 
-    public function logAppError(ErrorException $e)
+    public function logAppError(Exception $e)
     {
         event(new AppError($e));
 
