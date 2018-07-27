@@ -2,23 +2,46 @@
 
 namespace BL\Slumen\Http;
 
-class Logger
+use Monolog\Logger as MonoLogger;
+
+class Logger extends MonoLogger
 {
-    protected $stream = null;
-    protected $file   = null;
+    // protected $stream = null;
+    // protected $file   = null;
 
-    public function __construct($file, $single)
-    {
-        $this->file   = $file;
-        $single || $this->stream = fopen($this->file, 'a');
-    }
+    // public function __construct($file, $single)
+    // {
+    //     $this->file   = $file;
+    //     $single || $this->stream = fopen($this->file, 'a');
+    // }
 
-    public function accessJSON(array $data)
+    // public function accessJSON(array $data)
+    // {
+    //     if($this->stream) {
+    //         fwrite($this->stream, json_encode($data) . "\n");
+    //     } else {
+    //         error_log(json_encode($data) . "\n", 3, $this->file);
+    //     }
+    // }
+    public function addAccessInfo(array $data)
     {
-        if($this->stream) {
-            fwrite($this->stream, json_encode($data) . "\n");
-        } else {
-            error_log(json_encode($data) . "\n", 3, $this->file);
+        $record = $data;
+        if (!$this->handlers) {
+            return false;
         }
+
+        foreach ($this->processors as $processor) {
+            $record = call_user_func($processor, $record);
+        }
+
+        while ($handler = current($this->handlers)) {
+            if (true === $handler->handle($record)) {
+                break;
+            }
+
+            next($this->handlers);
+        }
+
+        return true;
     }
 }

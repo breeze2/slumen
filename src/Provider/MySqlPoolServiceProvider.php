@@ -24,7 +24,7 @@ class MySqlPoolServiceProvider extends ServiceProvider
                     'database'    => $config['database'],
                     'charset'     => $config['charset'],
                     'strict_type' => $config['strict'],
-                    'fetch_mode'  => false,
+                    'fetch_mode'  => true,
                     'timeout'     => -1,
                 ], $db_pool['max_connection'], $db_pool['min_connection']);
                 return new CoMySqlPoolConnection($pdo, $config['database'], $config['prefix'], $config);

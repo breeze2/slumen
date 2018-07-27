@@ -3,6 +3,7 @@
 namespace BL\Slumen\Http;
 
 use BL\Slumen\Events\AppError;
+use BL\Slumen\Provider\HttpLoggerServiceProvider;
 use ErrorException;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
@@ -12,11 +13,11 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Worker
 {
+    public $app = null;
+
     protected $id     = null;
     protected $server = null;
     protected $logger = null;
-
-    public $app = null;
 
     private $stats_uri;
     private $static_resources;
@@ -29,6 +30,7 @@ class Worker
         $this->id     = $worker_id;
         $this->server = $server;
         $this->app    = app();
+        $this->logger = $this->makeLogger();
     }
 
     public function initialize(array $config)
@@ -40,9 +42,17 @@ class Worker
         $this->gzip_min_length  = $config['gzip_min_length'];
     }
 
-    public function setLogger(Logger $logger = null)
+    protected function makeLogger()
     {
-        $this->logger = $logger;
+        try {
+            $logger = app(HttpLoggerServiceProvider::PROVIDER_NAME);
+            if ($logger instanceof Logger) {
+                return $logger;
+            }
+        } catch (Exception $e) {
+            // do nothing
+        }
+        return null;
     }
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
@@ -171,7 +181,7 @@ class Worker
         if ($this->logger) {
             $log                        = array_merge($request_server, $meta);
             $log['RESPONSE_TIME_FLOAT'] = microtime(true);
-            $this->logger->accessJSON($log);
+            $this->logger->addAccessInfo($log);
         }
     }
 

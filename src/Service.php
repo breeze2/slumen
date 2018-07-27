@@ -8,7 +8,6 @@ use BL\Slumen\Events\ServerStopped;
 use BL\Slumen\Events\WorkerError;
 use BL\Slumen\Events\WorkerStarted;
 use BL\Slumen\Events\WorkerStopped;
-use BL\Slumen\Http\Logger;
 use BL\Slumen\Http\Worker;
 use swoole_http_server as SwooleHttpServer;
 
@@ -61,7 +60,6 @@ class Service
     {
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
-        $this->worker->setLogger($this->makeLogger($worker_id));
 
         event(new WorkerStarted($server, $worker_id));
     }
@@ -85,19 +83,6 @@ class Service
         if ($this->worker->handle($request, $response) !== false) {
             event(new ServerResponded($request, $response));
         }
-    }
-
-    protected function makeLogger($worker_id)
-    {
-        $http_log_path = $this->config['http_log_path'];
-        if ($http_log_path) {
-            $http_log_single = $this->config['http_log_single'];
-            $file_name       = $http_log_single ? 'http-server.log' : date('Y-m-d') . '_' . $worker_id . '.log';
-
-            $file = $http_log_path . '/' . $file_name;
-            return new Logger($file, $http_log_single);
-        }
-        return null;
     }
 
 }
