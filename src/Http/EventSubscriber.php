@@ -7,7 +7,7 @@ use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
 use swoole_http_server as SwooleHttpServer;
 
-class Subscriber
+class EventSubscriber
 {
     protected $events = [];
 
