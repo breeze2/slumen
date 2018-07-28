@@ -1,4 +1,4 @@
-![logo](_media/slumen.svg)
+![logo](media/slumen.svg)
 
 # Slumen<small>1.0.0</small>
 

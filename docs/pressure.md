@@ -26,7 +26,7 @@ $ ab -c 200 -n 500000 -k http://127.0.0.1:9080/
 ```
 #### 测试结果
 
-![Static Output](_media/pressure_test_static_output.jpg)
+![Static Output](media/pressure_test_static_output.jpg)
 
 ### 数据库读写
 
@@ -43,5 +43,5 @@ $ ab -c 200 -n 50000 -k http://127.0.0.1:9080/db_write
 ```
 #### 测试结果
 
-![Database Read & Write](_media/pressure_test_database_rw.jpg)
+![Database Read & Write](media/pressure_test_database_rw.jpg)
 

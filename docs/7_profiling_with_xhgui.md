@@ -124,7 +124,7 @@ $ php -S 127.0.0.1:8000 -t webroot
 
 查看分析`/`路由请求处理的火焰图：
 
-![火焰图](/_media/xhgui_flamegraph.png)
+![火焰图](/media/xhgui_flamegraph.png)
 
 ### 最后
 
