@@ -34,7 +34,7 @@ class MySqlManager
     protected $min_number;
     protected $config;
     protected $channel;
-    protected $numbser;
+    protected $number;
     private $is_recycling = false;
 
     /**
@@ -49,32 +49,32 @@ class MySqlManager
         $this->min_number     = $min_number;
         $this->config         = $config;
         $this->channel        = new CoChannel($max_number);
-        $this->numbser        = 0;
+        $this->number        = 0;
     }
 
     private function isFull()
     {
-        return $this->numbser === $this->max_number;
+        return $this->number === $this->max_number;
     }
 
     private function isEmpty()
     {
-        return $this->numbser === 0;
+        return $this->number === 0;
     }
 
     private function shouldRecover()
     {
-        return $this->numbser > $this->min_number;
+        return $this->number > $this->min_number;
     }
 
     private function increase()
     {
-        return $this->numbser += 1;
+        return $this->number += 1;
     }
 
     private function decrease()
     {
-        return $this->numbser -= 1;
+        return $this->number -= 1;
     }
 
     protected function build()

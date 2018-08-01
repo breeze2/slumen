@@ -43,6 +43,7 @@ return [
 <?php
 $results = app('SlumenMySqlPool')->table('user')->where('id', 1)->get();
 ```
+注意：对于原生SQL的参数绑定，绑定的参数数组必须为数字索引的数组，参数的顺序对应SQL语句中`?`的出现顺序。
 
 `app('SlumenMySqlPool')`与`app('db')`不会冲突，代码中既可以使用`app('db')`也可以使用`app('SlumenMySqlPool')`。
 `app('SlumenMySqlPool')`返回的是Swoole提供的MySQL协程连接，高并发时效率会比PDO连接的要好；不过，复杂的数据库读写操作（如事务，读写分离等），请使用`app('db')`，简单的一次性数据库操作才考虑使用`app('SlumenMySqlPool')`，因为每次从连接池中取出的都是不同的连接。
