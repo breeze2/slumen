@@ -60,7 +60,11 @@ class Request
         }
 
         // HTTP_USER_AGENT
-        $this->server['HTTP_USER_AGENT'] = $this->header['HTTP_USER_AGENT'];
+        if (isset($this->header['HTTP_USER_AGENT'])) {
+            $this->server['HTTP_USER_AGENT'] = $this->header['HTTP_USER_AGENT'];
+        } else {
+            $this->server['HTTP_USER_AGENT'] = '';
+        }
 
         // HTTP_REFERER
         if (isset($this->header['HTTP_REFERER'])) {
