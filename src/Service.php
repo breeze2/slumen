@@ -4,12 +4,11 @@ namespace BL\Slumen;
 use BL\Slumen\Http\EventSubscriber;
 use BL\Slumen\Http\Worker;
 use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
+use Exception;
 use swoole_http_server as SwooleHttpServer;
 
 class Service
 {
-    const PROVIDER_MYSQL_POOL = 'SlumenMySqlPool';
-
     protected $server;
     protected $worker;
     protected $config;
