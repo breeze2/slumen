@@ -96,4 +96,9 @@ class CoMySqlPoolConnection extends MySqlConnection
     {
         $this->pdo->autoRecycling($timeout, $sleep);
     }
+
+    public function getClientNumber()
+    {
+        return $this->pdo->getNumber();
+    }
 }
