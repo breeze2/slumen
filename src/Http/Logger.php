@@ -12,7 +12,7 @@ class Logger
     protected $path;
     protected $file;
     protected $file_name;
-    protected $file_per;
+    protected $file_date;
 
     protected $single;
     protected $prefix;
@@ -29,9 +29,9 @@ class Logger
 
     public function initialize(array $config)
     {
-        if (array_key_exists('file_per', $config)) {
-            $this->file_per = $config['file_per'];
-            $this->date     = date($this->file_per);
+        if (array_key_exists('file_date', $config)) {
+            $this->file_date = $config['file_date'];
+            $this->date     = date($this->file_date);
         }
         if (array_key_exists('prefix', $config)) {
             $this->prefix = $config['prefix'];
@@ -61,7 +61,7 @@ class Logger
         }
         if ($this->stream) {
             if ($this->date) {
-                $now = date($this->file_per);
+                $now = date($this->file_date);
                 if ($this->date !== $now) {
                     fclose($this->stream);
                     $this->date = $now;

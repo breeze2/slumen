@@ -15,7 +15,7 @@ class HttpLoggerServiceProvider extends ServiceProvider
             $http_log_path   = config('slumen.http_log_path');
             $http_log_single = config('slumen.http_log_single');
             if ($http_log_path) {
-                $file      = $http_log_path . '/' . $file_name;
+                // $file   = $http_log_path . '/' . $file_name;
                 $logger = new Logger($http_log_path, $file_name, $http_log_single);
                 return $logger;
             }
