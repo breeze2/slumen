@@ -114,11 +114,11 @@ class Worker
         $uri        = $request->server['REQUEST_URI'];
         $file       = realpath($public_dir . $uri);
         $status     = 200;
-        if (is_file($file)) {
+        if ($file && is_file($file)) {
             if (!strncasecmp($file, $uri, strlen($public_dir))) {
                 $status = 403;
                 $response->status($status);
-                $response->end();
+                $response->end('');
             } else {
                 $status = 200;
                 $response->status($status);
