@@ -2,7 +2,6 @@
 
 namespace BL\Slumen\Http;
 
-use BL\Slumen\Events\AppError;
 use BL\Slumen\Provider\HttpLoggerServiceProvider;
 use Exception;
 use swoole_http_request as SwooleHttpRequest;

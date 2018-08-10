@@ -186,7 +186,8 @@ class Command
     {
         if ($this->pidFile && file_exists($this->pidFile)) {
             $pid = file_get_contents($this->pidFile);
-            if (posix_getpgid($pid)) {
+            $pid = (int)$pid;
+            if ($pid && posix_getpgid($pid)) {
                 return $pid;
             } else {
                 unlink($this->pidFile);

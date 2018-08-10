@@ -4,13 +4,16 @@ namespace BL\Slumen;
 
 use Laravel\Lumen\Application as LumenApplication;
 
-class Application extends LumenApplication{
+class Application extends LumenApplication
+{
 
-    public function getMiddleware(){
+    public function getMiddleware()
+    {
         return $this->middleware;
     }
 
-    public function callTerminableMiddleware($response){
+    public function callTerminableMiddleware($response)
+    {
         parent::callTerminableMiddleware($response);
     }
 }
