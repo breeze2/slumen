@@ -82,6 +82,7 @@ class Service
     public function onWorkerStart($server, $worker_id)
     {
         $this->reloadApplication();
+        $this->config = $this->initializeConfig();
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
         $this->publisher && $this->worker->setPublisher($this->publisher);

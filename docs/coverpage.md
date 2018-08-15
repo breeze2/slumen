@@ -1,6 +1,6 @@
 ![logo](media/slumen.svg)
 
-# Slumen<small>1.0.1</small>
+# Slumen<small>1.0.2</small>
 
 > 用Swoole加速你的Lumen项目
 

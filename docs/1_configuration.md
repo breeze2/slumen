@@ -10,7 +10,6 @@
 SLUMEN_RUNNING_MODE=SWOOLE_BASE           # Swoole服务器的运行模式，默认SWOOLE_PROCESS
 SLUMEN_SOCKET_TYPE=SWOOLE_SOCK_TCP        # Swoole服务器的Socket类型，默认SWOOLE_SOCK_TCP
 
-SLUMEN_PID_FILE=app/slumen.pid            # Swoole服务器主进程ID存放位置，默认app/slumen.pid
 SLUMEN_HOST=127.0.0.1                     # Swoole服务器IP地址，默认127.0.0.1
 SLUMEN_PORT=9080                          # Swoole服务器监听端口，默认9080
 
@@ -64,7 +63,7 @@ ssl_ciphers
 user
 group
 chroot
-pid_file                                # 默认app/slumen.pid
+pid_file
 pipe_buffer_size
 buffer_output_size
 socket_buffer_size
@@ -104,15 +103,9 @@ return [
     'gzip'             => env('SLUMEN_GZIP', 1),
     'gzip_min_length'  => env('SLUMEN_GZIP_MIN_LENGTH', 1024),
     'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
-    'pid_file'         => env('SLUMEN_PID_FILE', storage_path('app/slumen.pid')),
     'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
     'http_log_path'    => env('SLUMEN_HTTP_LOG_PATH', false),
     'http_log_single'  => env('SLUMEN_HTTP_LOG_SINGLE', false),
-
-    'root_dir'         => base_path(),
-    'public_dir'       => base_path('public'),
-
-    'service_hook'     => env('SLUMEN_SERVICE_HOOK'),
 
     /*
     Swoole Http Server
