@@ -13,6 +13,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0.0",
+        "ext-pcntl" : "*",
+        "ext-posix" : "*",
         "ext-swoole" : ">=1.9.2",
         "laravel/lumen-framework":">=5.5.0"
     },

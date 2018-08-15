@@ -1,6 +1,8 @@
 <?php
 namespace BL\Slumen;
 
+require_once __DIR__ . '/helpers.php';
+
 use BL\Slumen\Http\EventSubscriber;
 use BL\Slumen\Http\Worker;
 use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
@@ -9,18 +11,43 @@ use swoole_http_server as SwooleHttpServer;
 
 class Service
 {
+    const CONFIG_KEY = 'slumen';
+
     protected $server;
     protected $worker;
     protected $config;
     protected $publisher;
+    protected $bootstrap;
 
-    public function __construct(array $config)
+    public function __construct($bootstrap)
     {
+        $this->bootstrap = $bootstrap;
+        $this->reloadApplication();
+        $config = $this->initializeConfig();
+
         $this->config = $config;
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
         if (array_key_exists('swoole_server', $config) && is_array($config['swoole_server'])) {
             $this->server->set($config['swoole_server']);
         }
+    }
+
+    private function mergeLumenConfig($key, $path)
+    {
+        $app    = app();
+        $config = $app['config']->get($key, []);
+        $app['config']->set($key, array_merge(require $path, $config));
+    }
+
+    private function initializeConfig()
+    {
+        $app                  = app();
+        $slumen               = $app['config']->get(self::CONFIG_KEY, []);
+        $config               = $slumen;
+        $config['public_dir'] = base_path('public');
+        $config['bootstrap']  = $this->bootstrap;
+        $config['pid_file']   = __DIR__ . '/slumen.pid';
+        return $config;
     }
 
     public function start()
@@ -54,6 +81,7 @@ class Service
 
     public function onWorkerStart($server, $worker_id)
     {
+        $this->reloadApplication();
         $this->worker = new Worker($server, $worker_id);
         $this->worker->initialize($this->config);
         $this->publisher && $this->worker->setPublisher($this->publisher);
@@ -92,6 +120,13 @@ class Service
             // do nothing
         }
         return null;
+    }
+
+    protected function reloadApplication()
+    {
+        require SLUMEN_COMPOSER_INSTALL;
+        require $this->bootstrap;
+        $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/slumen.php');
     }
 
 }

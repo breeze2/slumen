@@ -3,62 +3,29 @@ namespace BL\Slumen;
 
 class Command
 {
-    const VERSION                     = 'slumen 0.6.0';
-    const CONFIG_PREFIX               = 'SLUMEN_';
-    const DEFAULT_BOOTSTRAP_FILE_NAME = 'slumen.php';
-    const CONFIG_KEY                  = 'slumen';
+    const VERSION             = 'slumen 0.8.0';
+    const BOOTSTRAP_FILE_NAME = 'slumen.php';
 
     protected $bootstrap;
-    protected $config;
     protected $pidFile;
 
     private function __construct()
     {
-        self::globalHelpers();
-        if ($this->checkBootstrap()) {
-            require $this->bootstrap;
-            $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/slumen.php');
-            $this->config  = $this->initializeConfig();
-            $this->pidFile = $this->config['pid_file'];
-        }
-
+        $this->checkBootstrap();
+        $this->pidFile = __DIR__ . '/slumen.pid';
     }
 
-    public static function globalHelpers()
-    {
-        require_once __DIR__ . '/helpers.php';
-    }
-
-    private function checkBootstrap($file = self::DEFAULT_BOOTSTRAP_FILE_NAME)
+    private function checkBootstrap($file = self::BOOTSTRAP_FILE_NAME)
     {
         $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
         if (file_exists($bootstrap_file)) {
             $this->bootstrap = $bootstrap_file;
-            return true;
         } else {
             echo 'please copy ' . realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/' . $file) . PHP_EOL;
             echo 'to ' . realpath($bootstrap_path) . '/' . PHP_EOL;
             exit(1);
         }
-        return false;
-    }
-
-    private function mergeLumenConfig($key, $path)
-    {
-        $app    = app();
-        $config = $app['config']->get($key, []);
-        $app['config']->set($key, array_merge(require $path, $config));
-    }
-
-    private function initializeConfig()
-    {
-        $app                 = app();
-        $slumen              = $app['config']->get(self::CONFIG_KEY, []);
-        $config              = $slumen;
-        $config['bootstrap'] = $this->bootstrap;
-
-        return $config;
     }
 
     protected function run($argv)
@@ -102,7 +69,7 @@ class Command
             exit(1);
         }
 
-        $service = new Service($this->config);
+        $service = new Service($this->bootstrap);
         $service->start();
     }
 
@@ -174,19 +141,17 @@ class Command
     {
         if ($pid = $this->getPid()) {
             posix_kill($pid, $signal);
-            return true;
         } else {
             echo 'slumen is not running!' . PHP_EOL;
             exit(1);
         }
-        return false;
     }
 
     protected function getPid()
     {
         if ($this->pidFile && file_exists($this->pidFile)) {
             $pid = file_get_contents($this->pidFile);
-            $pid = (int)$pid;
+            $pid = (int) $pid;
             if ($pid && posix_getpgid($pid)) {
                 return $pid;
             } else {
