@@ -1,6 +1,6 @@
 <?php
 
-namespace BL\Slumen\Provider;
+namespace BL\Slumen\Providers;
 
 use BL\Slumen\Http\EventSubscriber;
 

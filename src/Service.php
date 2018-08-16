@@ -5,7 +5,7 @@ require_once __DIR__ . '/helpers.php';
 
 use BL\Slumen\Http\EventSubscriber;
 use BL\Slumen\Http\Worker;
-use BL\Slumen\Provider\HttpEventSubscriberServiceProvider;
+use BL\Slumen\Providers\HttpEventSubscriberServiceProvider;
 use Exception;
 use swoole_http_server as SwooleHttpServer;
 

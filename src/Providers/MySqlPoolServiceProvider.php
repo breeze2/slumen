@@ -1,6 +1,6 @@
 <?php
 
-namespace BL\Slumen\Provider;
+namespace BL\Slumen\Providers;
 
 use BL\Slumen\Database\CoMySqlManager;
 use BL\Slumen\Database\CoMySqlPoolConnection;
@@ -16,7 +16,7 @@ class MySqlPoolServiceProvider extends ServiceProvider
             $config = app()['config']['database.connections.mysql'];
             if ($config) {
                 $db_pool = config('slumen.db_pool');
-                $pdo = new CoMySqlManager([
+                $pdo     = new CoMySqlManager([
                     'host'        => $config['host'],
                     'port'        => $config['port'],
                     'user'        => $config['username'],
