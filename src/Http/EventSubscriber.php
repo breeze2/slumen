@@ -16,45 +16,51 @@ class EventSubscriber
         $this->subscribe();
     }
 
-    public function onAppError(Exception $error) {}
+    public function onAppError(Exception $error)
+    {}
 
-    public function onServerRequested(SwooleHttpRequest $request, SwooleHttpResponse $response) {}
+    public function onServerRequested(SwooleHttpRequest $request, SwooleHttpResponse $response)
+    {}
 
-    public function onServerResponded(SwooleHttpRequest $request, SwooleHttpResponse $response) {}
+    public function onServerResponded(SwooleHttpRequest $request, SwooleHttpResponse $response)
+    {}
 
-    public function onServerStarted(SwooleHttpServer $server) {}
+    public function onServerStarted(SwooleHttpServer $server)
+    {}
 
-    public function onServerStopped(SwooleHttpServer $server) {}
+    public function onServerStopped(SwooleHttpServer $server)
+    {}
 
-    public function onWorkerError(SwooleHttpServer $server, $work_id, $worker_pid, $exit_code, $signal) {}
+    public function onWorkerError(SwooleHttpServer $server, $work_id, $worker_pid, $exit_code, $signal)
+    {}
 
-    public function onWorkerStarted(SwooleHttpServer $server, $work_id) {}
+    public function onWorkerStarted(SwooleHttpServer $server, $work_id)
+    {}
 
-    public function onWorkerStopped(SwooleHttpServer $server, $work_id) {}
+    public function onWorkerStopped(SwooleHttpServer $server, $work_id)
+    {}
 
     public function subscribe()
     {
-        $this->events['AppError'] ='onAppError';
+        $this->events['AppError'] = 'onAppError';
 
-        $this->events['ServerRequested'] ='onServerRequested';
+        $this->events['ServerRequested'] = 'onServerRequested';
 
-        $this->events['ServerResponded'] ='onServerResponded';
+        $this->events['ServerResponded'] = 'onServerResponded';
 
-        $this->events['ServerStarted'] ='onServerStarted';
+        $this->events['ServerStarted'] = 'onServerStarted';
 
-        $this->events['ServerStopped'] ='onServerStopped';
+        $this->events['ServerStopped'] = 'onServerStopped';
 
-        $this->events['WorkerError'] ='onWorkerError';
+        $this->events['WorkerError'] = 'onWorkerError';
 
-        $this->events['WorkerStarted'] ='onWorkerStarted';
+        $this->events['WorkerStarted'] = 'onWorkerStarted';
 
-        $this->events['WorkerStopped'] ='onWorkerStopped';
+        $this->events['WorkerStopped'] = 'onWorkerStopped';
     }
 
-    public function publish($event, array $params = [])
+    public function getEvents()
     {
-        if(array_key_exists($event, $this->events) && method_exists($this, $this->events[$event])) {
-            return call_user_func_array([$this, $this->events[$event]], $params);
-        }
+        return $this->events;
     }
 }

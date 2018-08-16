@@ -3,6 +3,7 @@ namespace BL\Slumen;
 
 require_once __DIR__ . '/helpers.php';
 
+use BL\Slumen\Http\EventPublisher;
 use BL\Slumen\Http\EventSubscriber;
 use BL\Slumen\Http\Worker;
 use BL\Slumen\Providers\HttpEventSubscriberServiceProvider;
@@ -37,17 +38,17 @@ class Service
 
     private function mergeLumenConfig()
     {
+        $app    = app();
         $key    = self::CONFIG_KEY;
         $path   = __DIR__ . '/../config/slumen.php';
-        $app    = app();
         $config = $app['config']->get($key, []);
         $app['config']->set($key, array_merge(require $path, $config));
     }
 
     private function getConfig()
     {
-        $key    = self::CONFIG_KEY;
         $app    = app();
+        $key    = self::CONFIG_KEY;
         $config = $app['config']->get($key, []);
         return $config;
     }
@@ -85,7 +86,6 @@ class Service
     {
         $this->reloadApplication();
         $this->worker = new Worker($server, $worker_id);
-        $this->publisher && $this->worker->setPublisher($this->publisher);
         $this->publisher && $this->publisher->publish('WorkerStarted', [$server, $worker_id]);
     }
 
@@ -113,9 +113,9 @@ class Service
     protected function makePublisher()
     {
         try {
-            $publisher = app(HttpEventSubscriberServiceProvider::PROVIDER_NAME);
-            if ($publisher instanceof EventSubscriber) {
-                return $publisher;
+            $subscriber = app(HttpEventSubscriberServiceProvider::PROVIDER_NAME);
+            if ($subscriber instanceof EventSubscriber) {
+                return new EventPublisher($subscriber);
             }
         } catch (Exception $e) {
             // do nothing

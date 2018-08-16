@@ -15,8 +15,6 @@ class Worker
 
     protected $id;
     protected $server;
-    protected $logger;
-    protected $publisher;
 
     private $stats_uri;
     private $static_resources;
@@ -38,11 +36,6 @@ class Worker
         $this->stats_uri        = config('slumen.stats_uri');
         $this->static_resources = config('slumen.static_resources');
         $this->public_dir       = base_path('public');
-    }
-
-    public function setPublisher(EventSubscriber $subscriber)
-    {
-        $this->publisher = $subscriber;
     }
 
     public function handle(SwooleHttpRequest $req, SwooleHttpResponse $res)
@@ -153,8 +146,6 @@ class Worker
 
     public function logAppError(Exception $e)
     {
-        $this->publisher && $this->publisher->publish('AppError', [$e]);
-
         $prefix = sprintf("[%s #%d *%d]\tERROR\t", date('Y-m-d H:i:s'), $this->server->master_pid, $this->id);
         fwrite(STDOUT, sprintf('%s%s(%d): %s', $prefix, $e->getFile(), $e->getLine(), $e->getMessage()) . PHP_EOL);
     }
