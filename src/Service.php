@@ -16,12 +16,14 @@ class Service
     protected $server;
     protected $worker;
     protected $publisher;
+    protected $autoload_file;
     protected $bootstrap_file;
     protected $pid_file;
 
-    public function __construct($bootstrap_file, $pid_file)
+    public function __construct($autoload_file, $bootstrap_file, $pid_file)
     {
         $this->pid_file       = $pid_file;
+        $this->autoload_file  = $autoload_file;
         $this->bootstrap_file = $bootstrap_file;
 
         $this->mergeLumenConfig();
@@ -123,7 +125,7 @@ class Service
 
     protected function reloadApplication()
     {
-        require SLUMEN_COMPOSER_INSTALL;
+        require $this->autoload_file;
         require $this->bootstrap_file;
         $this->mergeLumenConfig();
     }

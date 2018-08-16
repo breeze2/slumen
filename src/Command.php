@@ -6,24 +6,26 @@ class Command
     const VERSION             = 'slumen 0.8.0';
     const BOOTSTRAP_FILE_NAME = 'slumen.php';
 
+    protected $autoload_file;
     protected $bootstrap_file;
     protected $pid_file;
 
     private function __construct()
     {
         $this->pid_file = __DIR__ . '/slumen.pid';
+        $this->autoload_file = SLUMEN_COMPOSER_INSTALL;
         $this->checkBootstrap();
         require $this->bootstrap_file;
     }
 
     private function checkBootstrap($file = self::BOOTSTRAP_FILE_NAME)
     {
-        $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
+        $bootstrap_path = dirname($this->autoload_file) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
         if (file_exists($bootstrap_file)) {
             $this->bootstrap_file = $bootstrap_file;
         } else {
-            echo 'please copy ' . realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/' . $file) . PHP_EOL;
+            echo 'please copy ' . realpath(dirname($this->autoload_file) . '/breeze2/slumen/bootstrap/' . $file) . PHP_EOL;
             echo 'to ' . realpath($bootstrap_path) . '/' . PHP_EOL;
             exit(1);
         }
@@ -70,7 +72,7 @@ class Command
             exit(1);
         }
 
-        $service = new Service($this->bootstrap_file, $this->pid_file);
+        $service = new Service($this->autoload_file, $this->bootstrap_file, $this->pid_file);
         $service->start();
     }
 
