@@ -98,7 +98,7 @@ class SlumenEventSubscriber extends EventSubscriber
 ```php
 <?php
 // in bootstrap/slumen.php
-$app->singleton(BL\Slumen\Provider\HttpEventSubscriberServiceProvider::PROVIDER_NAME, App\Tools\SlumenEventSubscriber::class);
+$app->singleton(BL\Slumen\Providers\HttpEventSubscriberServiceProvider::PROVIDER_NAME, App\Tools\SlumenEventSubscriber::class);
 
 ```
 

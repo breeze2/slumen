@@ -1,5 +1,21 @@
 ## 更新日志
 
+### v1.0.3
+_2018/07/27_
+
+#### ✨Improvements
+* Adjust `HttpEventSubscriberServiceProvider.php`
+* Adjust `Command.php` & `Service.php`
+* Suit phpstan
+
+#### 🐛Fixes
+* `slumen reload` not working
+* `Class SlumenHttpEventSubscriber does not exist`
+* MySQL pool client number unlimit
+
+#### 💥Breaking changes
+* remove `HttpLoggerServiceProvider`
+
 ### v1.0.0
 _2018/07/27_
 

@@ -8,12 +8,11 @@ Swoole服务器提供多个[事件回调函数](https://wiki.swoole.com/wiki/pag
 4. `onWorkerStopped`，Worker停止后；
 5. `onServerRequested`，接收请求后；
 6. `onServerResponded`，返回响应后；
-7. `onAppError`，应用发生错误后；
 8. ...
 
 ### 使用方法
 
-先定义一个类，继承自`BL\Slumen\Http\EventSubscriber`，再定义公有方法，比如`onServerStarted`：
+先定义一个类，继承自`BL\Slumen\Http\EventSubscriber`，再定义作为事件回调函数的公有方法，比如`onServerStarted`：
 
 ```php
 <?php
@@ -35,7 +34,7 @@ class SlumenEventSubscriber extends EventSubscriber
 ```php
 <?php
 // in bootstrap/slumen.php
-$app->singleton(BL\Slumen\Provider\HttpEventSubscriberServiceProvider::PROVIDER_NAME, App\Tools\SlumenEventSubscriber::class);
+$app->singleton(BL\Slumen\Providers\HttpEventSubscriberServiceProvider::PROVIDER_NAME, App\Tools\SlumenEventSubscriber::class);
 ```
 
 最后重启Swoole服务器时，程序便会`var_dump`出`$server`变量的值。

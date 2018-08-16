@@ -4,12 +4,12 @@
 
 ### 服务注入
 
-在启动文件`bootstrap/slumen.php`中，向服务容器注册MySQL连接池服务提供者`BL\Slumen\Provider\MySqlPoolServiceProvider`：
+在启动文件`bootstrap/slumen.php`中，向服务容器注册MySQL连接池服务提供者`BL\Slumen\Providers\MySqlPoolServiceProvider`：
 
 ```php
 <?php
 // in bootstrap/slumen.php
-$app->register(BL\Slumen\Provider\MySqlPoolServiceProvider::class);
+$app->register(BL\Slumen\Providers\MySqlPoolServiceProvider::class);
 ```
 
 ### 连接配置

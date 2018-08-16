@@ -19,9 +19,6 @@ SLUMEN_STATS_URI=/slumen-stats            # Swoole服务器统计信息的uri，
 SLUMEN_GZIP=1                             # Swoole服务器gzip压缩级别，默认1，留空则不开启gzip压缩功能
 SLUMEN_GZIP_MIN_LENGTH=1024               # Swoole服务器开启gzip压缩功能的阈值，默认1024，单位Byte
 
-SLUMEN_HTTP_LOG_PATH=/var/log/slumen      # Swoole服务器HTTP日志保存目录，须是绝对路径，并对目录有读写权限，留空则不保存请求日志，默认留空
-SLUMEN_HTTP_LOG_SINGLE=false              # HTTP日志是否记录在单一文件中，Swoole服务器会有多个Worker，各自记录在不同文件速度更快，默认false
-
 SLUMEN_MAX_REQUEST=1024                   # 每个Worker最多处理请求数，之后销毁重生，可以避免内存泄漏，留空则不限制Worker最多处理请求数，默认留空
 ```
 
@@ -104,8 +101,13 @@ return [
     'gzip_min_length'  => env('SLUMEN_GZIP_MIN_LENGTH', 1024),
     'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
     'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
-    'http_log_path'    => env('SLUMEN_HTTP_LOG_PATH', false),
-    'http_log_single'  => env('SLUMEN_HTTP_LOG_SINGLE', false),
+
+    'db_pool'          => [
+        'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION', env('SLUMEN_DB_POOL_MAX_CONN', 120)),
+        'min_connection'    => env('SLUMEN_DB_POOL_MIN_CONNECTION', env('SLUMEN_DB_POOL_MIN_CONN', 0)),
+        'wait_timeout'      => env('SLUMEN_DB_POOL_WAIT_TIMEOUT', 120),
+        'checking_interval' => env('SLUMEN_DB_POOL_CHECKING_INTERVAL', 20),
+    ],
 
     /*
     Swoole Http Server
