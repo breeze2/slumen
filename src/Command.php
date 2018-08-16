@@ -6,13 +6,14 @@ class Command
     const VERSION             = 'slumen 0.8.0';
     const BOOTSTRAP_FILE_NAME = 'slumen.php';
 
-    protected $bootstrap;
-    protected $pidFile;
+    protected $bootstrap_file;
+    protected $pid_file;
 
     private function __construct()
     {
+        $this->pid_file = __DIR__ . '/slumen.pid';
         $this->checkBootstrap();
-        $this->pidFile = __DIR__ . '/slumen.pid';
+        require $this->bootstrap_file;
     }
 
     private function checkBootstrap($file = self::BOOTSTRAP_FILE_NAME)
@@ -20,7 +21,7 @@ class Command
         $bootstrap_path = dirname(SLUMEN_COMPOSER_INSTALL) . '/../bootstrap/';
         $bootstrap_file = $bootstrap_path . $file;
         if (file_exists($bootstrap_file)) {
-            $this->bootstrap = $bootstrap_file;
+            $this->bootstrap_file = $bootstrap_file;
         } else {
             echo 'please copy ' . realpath(dirname(SLUMEN_COMPOSER_INSTALL) . '/breeze2/slumen/bootstrap/' . $file) . PHP_EOL;
             echo 'to ' . realpath($bootstrap_path) . '/' . PHP_EOL;
@@ -69,7 +70,7 @@ class Command
             exit(1);
         }
 
-        $service = new Service($this->bootstrap);
+        $service = new Service($this->bootstrap_file, $this->pid_file);
         $service->start();
     }
 
@@ -149,13 +150,13 @@ class Command
 
     protected function getPid()
     {
-        if ($this->pidFile && file_exists($this->pidFile)) {
-            $pid = file_get_contents($this->pidFile);
+        if ($this->pid_file && file_exists($this->pid_file)) {
+            $pid = file_get_contents($this->pid_file);
             $pid = (int) $pid;
             if ($pid && posix_getpgid($pid)) {
                 return $pid;
             } else {
-                unlink($this->pidFile);
+                unlink($this->pid_file);
             }
         }
         return false;

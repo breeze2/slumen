@@ -15,8 +15,8 @@ return [
     'http_log_single'  => env('SLUMEN_HTTP_LOG_SINGLE', false),
 
     'db_pool'          => [
-        'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION') ?: env('SLUMEN_DB_POOL_MAX_CONN', 120),
-        'min_connection'    => env('SLUMEN_DB_POOL_MIN_CONNECTION') ?: env('SLUMEN_DB_POOL_MIN_CONN', 0),
+        'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION', env('SLUMEN_DB_POOL_MAX_CONN', 120)),
+        'min_connection'    => env('SLUMEN_DB_POOL_MIN_CONNECTION', env('SLUMEN_DB_POOL_MIN_CONN', 0)),
         'wait_timeout'      => env('SLUMEN_DB_POOL_WAIT_TIMEOUT', 120),
         'checking_interval' => env('SLUMEN_DB_POOL_CHECKING_INTERVAL', 20),
     ],
@@ -29,7 +29,7 @@ return [
         'max_request'              => env('SLUMEN_MAX_REQUEST', 0),
         'daemonize'                => env('SLUMEN_DAEMONIZE', true),
         'log_file'                 => env('SLUMEN_LOG_FILE', storage_path('logs/slumen.log')),
-        'max_connection'           => env('SLUMEN_MAX_CONNECTION') ?: env('SLUMEN_MAX_CONN', 1024),
+        'max_connection'           => env('SLUMEN_MAX_CONNECTION', env('SLUMEN_MAX_CONN', 1024)),
 
         'reactor_num'              => env('SLUMEN_REACTOR_NUM'),
         // 'worker_num'               => env('SLUMEN_WORKER_NUM'),

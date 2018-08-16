@@ -15,38 +15,38 @@ class Service
 
     protected $server;
     protected $worker;
-    protected $config;
     protected $publisher;
-    protected $bootstrap;
+    protected $bootstrap_file;
+    protected $pid_file;
 
-    public function __construct($bootstrap)
+    public function __construct($bootstrap_file, $pid_file)
     {
-        $this->bootstrap = $bootstrap;
-        $this->reloadApplication();
-        $config = $this->initializeConfig();
+        $this->pid_file       = $pid_file;
+        $this->bootstrap_file = $bootstrap_file;
 
-        $this->config = $config;
+        $this->mergeLumenConfig();
+        $config = $this->getConfig();
+
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
         if (array_key_exists('swoole_server', $config) && is_array($config['swoole_server'])) {
             $this->server->set($config['swoole_server']);
         }
     }
 
-    private function mergeLumenConfig($key, $path)
+    private function mergeLumenConfig()
     {
+        $key    = self::CONFIG_KEY;
+        $path   = __DIR__ . '/../config/slumen.php';
         $app    = app();
         $config = $app['config']->get($key, []);
         $app['config']->set($key, array_merge(require $path, $config));
     }
 
-    private function initializeConfig()
+    private function getConfig()
     {
-        $app                  = app();
-        $slumen               = $app['config']->get(self::CONFIG_KEY, []);
-        $config               = $slumen;
-        $config['public_dir'] = base_path('public');
-        $config['bootstrap']  = $this->bootstrap;
-        $config['pid_file']   = __DIR__ . '/slumen.pid';
+        $key    = self::CONFIG_KEY;
+        $app    = app();
+        $config = $app['config']->get($key, []);
         return $config;
     }
 
@@ -65,7 +65,7 @@ class Service
 
     public function onStart($server)
     {
-        $file = $this->config['pid_file'];
+        $file = $this->pid_file;
         file_put_contents($file, $server->master_pid);
 
         $this->publisher && $this->publisher->publish('ServerStarted', [$server]);
@@ -73,7 +73,7 @@ class Service
 
     public function onShutdown($server)
     {
-        $file = $this->config['pid_file'];
+        $file = $this->pid_file;
         unlink($file);
 
         $this->publisher && $this->publisher->publish('ServerStopped', [$server]);
@@ -82,9 +82,7 @@ class Service
     public function onWorkerStart($server, $worker_id)
     {
         $this->reloadApplication();
-        $this->config = $this->initializeConfig();
         $this->worker = new Worker($server, $worker_id);
-        $this->worker->initialize($this->config);
         $this->publisher && $this->worker->setPublisher($this->publisher);
         $this->publisher && $this->publisher->publish('WorkerStarted', [$server, $worker_id]);
     }
@@ -126,8 +124,8 @@ class Service
     protected function reloadApplication()
     {
         require SLUMEN_COMPOSER_INSTALL;
-        require $this->bootstrap;
-        $this->mergeLumenConfig(self::CONFIG_KEY, __DIR__ . '/../config/slumen.php');
+        require $this->bootstrap_file;
+        $this->mergeLumenConfig();
     }
 
 }

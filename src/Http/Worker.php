@@ -2,7 +2,6 @@
 
 namespace BL\Slumen\Http;
 
-use BL\Slumen\Provider\HttpLoggerServiceProvider;
 use Exception;
 use swoole_http_request as SwooleHttpRequest;
 use swoole_http_response as SwooleHttpResponse;
@@ -30,31 +29,15 @@ class Worker
         $this->id     = $worker_id;
         $this->server = $server;
         $this->app    = app();
-        $this->logger = $this->makeLogger();
     }
 
-    public function initialize(array $config)
+    public function initialize()
     {
-        $this->stats_uri        = $config['stats_uri'];
-        $this->static_resources = $config['static_resources'];
-        $this->public_dir       = $config['public_dir'];
-        $this->gzip             = $config['gzip'];
-        $this->gzip_min_length  = $config['gzip_min_length'];
-    }
-
-    protected function makeLogger()
-    {
-        try {
-            $logger = app(HttpLoggerServiceProvider::PROVIDER_NAME);
-            if ($logger instanceof Logger) {
-                $logger->initialize(['worker_id' => $this->id]);
-                $logger->open();
-                return $logger;
-            }
-        } catch (Exception $e) {
-            // do nothing
-        }
-        return null;
+        $this->gzip             = config('slumen.gzip');
+        $this->gzip_min_length  = config('slumen.gzip_min_length');
+        $this->stats_uri        = config('slumen.stats_uri');
+        $this->static_resources = config('slumen.static_resources');
+        $this->public_dir       = base_path('public');
     }
 
     public function setPublisher(EventSubscriber $subscriber)
@@ -101,10 +84,6 @@ class Worker
         $response->header('Content-Type', 'application/json');
         $response->end($stats);
 
-        $this->logHttpAccess($request->server, [
-            'STATUS'          => 200,
-            'BODY_BYTES_SENT' => strlen($stats),
-        ]);
         return true;
     }
 
@@ -125,10 +104,7 @@ class Worker
                 $response->header('Content-Type', mime_content_type($file));
                 $response->sendFile($file);
             }
-            $this->logHttpAccess($request->server, [
-                'STATUS'          => $status,
-                'BODY_BYTES_SENT' => $status === 200 ? filesize($file) : 0,
-            ]);
+
             return true;
         }
         return false;
@@ -175,20 +151,6 @@ class Worker
             $body_bytes_sent = strlen($content);
 
             $response->end($content);
-        }
-
-        $this->logHttpAccess($request->server, [
-            'STATUS'          => $status,
-            'BODY_BYTES_SENT' => $body_bytes_sent,
-        ]);
-    }
-
-    public function logHttpAccess(array $request_server, array $meta)
-    {
-        if ($this->logger) {
-            $log                        = array_merge($request_server, $meta);
-            $log['RESPONSE_TIME_FLOAT'] = microtime(true);
-            $this->logger->addAccessInfo($log);
         }
     }
 
