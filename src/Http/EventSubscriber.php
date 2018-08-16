@@ -16,8 +16,8 @@ class EventSubscriber
         $this->subscribe();
     }
 
-    public function onAppError(Exception $error)
-    {}
+    // public function onAppError(Exception $error)
+    // {}
 
     public function onServerRequested(SwooleHttpRequest $request, SwooleHttpResponse $response)
     {}
@@ -42,7 +42,7 @@ class EventSubscriber
 
     public function subscribe()
     {
-        $this->events['AppError'] = 'onAppError';
+        // $this->events['AppError'] = 'onAppError';
 
         $this->events['ServerRequested'] = 'onServerRequested';
 
