@@ -123,10 +123,8 @@ class Worker
         $status          = 200;
         if ($http_response instanceof SymfonyBinaryFileResponse) {
             $file = $http_response->getFile()->getPathname();
-
-            $status          = $http_response->getStatusCode();
-            $body_bytes_sent = filesize($file);
-
+            // $status          = $http_response->getStatusCode();
+            // $body_bytes_sent = filesize($file);
             $response->sendfile($file);
 
         } else if ($http_response instanceof SymfonyResponse) {
@@ -147,9 +145,8 @@ class Worker
             }
         } else {
             $content         = (string) $http_response;
-            $status          = 200;
-            $body_bytes_sent = strlen($content);
-
+            // $status          = 200;
+            // $body_bytes_sent = strlen($content);
             $response->end($content);
         }
     }
