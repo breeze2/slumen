@@ -11,8 +11,6 @@ return [
     'gzip_min_length'  => env('SLUMEN_GZIP_MIN_LENGTH', 1024),
     'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
     'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
-    'http_log_path'    => env('SLUMEN_HTTP_LOG_PATH', false),
-    'http_log_single'  => env('SLUMEN_HTTP_LOG_SINGLE', false),
 
     'db_pool'          => [
         'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION', env('SLUMEN_DB_POOL_MAX_CONN', 120)),
