@@ -82,5 +82,6 @@ return [
         'upload_tmp_dir'           => env('SLUMEN_UPLOAD_TMP_DIR'),
         'http_parse_post'          => env('SLUMEN_HTTP_PARSE_POST'),
         'document_root'            => env('SLUMEN_DOCUMENT_ROOT'),
+        'http_compression'         => env('SLUMEN_HTTP_COMPRESSION'),
     ],
 ];

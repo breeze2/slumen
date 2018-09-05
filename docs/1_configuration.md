@@ -16,9 +16,6 @@ SLUMEN_PORT=9080                          # Swoole服务器监听端口，默认
 SLUMEN_STATIC_RESOURCES=false             # 是否可以访问public目录下静态资源，默认false，若设为true，请删除public目录下敏感文件
 SLUMEN_STATS_URI=/slumen-stats            # Swoole服务器统计信息的uri，默认/slumen-stats，留空则不可访问
 
-SLUMEN_GZIP=1                             # Swoole服务器gzip压缩级别，默认1，留空则不开启gzip压缩功能
-SLUMEN_GZIP_MIN_LENGTH=1024               # Swoole服务器开启gzip压缩功能的阈值，默认1024，单位Byte
-
 SLUMEN_MAX_REQUEST=1024                   # 每个Worker最多处理请求数，之后销毁重生，可以避免内存泄漏，留空则不限制Worker最多处理请求数，默认留空
 ```
 
@@ -81,6 +78,7 @@ max_coroutine
 upload_tmp_dir
 http_parse_post
 document_root
+http_compression
 ```
 
 
@@ -97,8 +95,6 @@ return [
 
     'host'             => env('SLUMEN_HOST', '127.0.0.1'),
     'port'             => env('SLUMEN_PORT', 9080),
-    'gzip'             => env('SLUMEN_GZIP', 1),
-    'gzip_min_length'  => env('SLUMEN_GZIP_MIN_LENGTH', 1024),
     'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
     'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
 
@@ -168,6 +164,7 @@ return [
         'upload_tmp_dir'           => env('SLUMEN_UPLOAD_TMP_DIR'),
         'http_parse_post'          => env('SLUMEN_HTTP_PARSE_POST'),
         'document_root'            => env('SLUMEN_DOCUMENT_ROOT'),
+        'http_compression'         => env('SLUMEN_HTTP_COMPRESSION'),
     ],
 ];
 
