@@ -7,8 +7,6 @@ return [
 
     'host'             => env('SLUMEN_HOST', '127.0.0.1'),
     'port'             => env('SLUMEN_PORT', 9080),
-    'gzip'             => env('SLUMEN_GZIP', 1),
-    'gzip_min_length'  => env('SLUMEN_GZIP_MIN_LENGTH', 1024),
     'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
     'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
 

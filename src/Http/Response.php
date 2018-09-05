@@ -18,11 +18,6 @@ class Response
         $this->response->end($string);
     }
 
-    public function gzip($level)
-    {
-        $this->response->gzip($level);
-    }
-
     public function header(string $key, string $value, bool $ucwords = true)
     {
         $this->response->header($key, $value, $ucwords);
@@ -42,13 +37,6 @@ class Response
     {
         foreach ($headers as $name => $values) {
             $this->response->header($name, implode(',', $values));
-        }
-    }
-
-    public function setGzip($level)
-    {
-        if ($level > 0) {
-
         }
     }
 
@@ -72,21 +60,4 @@ class Response
         return $this->response->header;
     }
 
-    public function checkGzipMime()
-    {
-        $mime = isset($this->response->header['Content-Type']) ? $this->response->header['Content-Type'] : '';
-
-        static $mimes = [
-            'text/plain'             => true,
-            'text/html'              => true,
-            'text/css'               => true,
-            'application/javascript' => true,
-            'application/json'       => true,
-            'application/xml'        => true,
-        ];
-        if ($pos = strpos($mime, ';')) {
-            $mime = substr($mime, 0, $pos);
-        }
-        return isset($mimes[strtolower($mime)]);
-    }
 }

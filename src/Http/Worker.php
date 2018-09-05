@@ -19,8 +19,6 @@ class Worker
     private $stats_uri;
     private $static_resources;
     private $public_dir;
-    private $gzip;
-    private $gzip_min_length;
 
     public function __construct(SwooleHttpServer $server, $worker_id)
     {
@@ -31,8 +29,6 @@ class Worker
 
     public function initialize()
     {
-        $this->gzip             = config('slumen.gzip');
-        $this->gzip_min_length  = config('slumen.gzip_min_length');
         $this->stats_uri        = config('slumen.stats_uri');
         $this->static_resources = config('slumen.static_resources');
         $this->public_dir       = base_path('public');
@@ -111,9 +107,9 @@ class Worker
         $response->setHeaders($http_response->headers->allPreserveCase());
         $response->setCookies($http_response->headers->getCookies());
 
-        $content         = '';
-        $body_bytes_sent = 0;
-        $status          = 200;
+        $content = '';
+        // $body_bytes_sent = 0;
+        // $status          = 200;
         if ($http_response instanceof SymfonyBinaryFileResponse) {
             $file = $http_response->getFile()->getPathname();
             // $status          = $http_response->getStatusCode();
@@ -121,23 +117,16 @@ class Worker
             $response->sendfile($file);
 
         } else if ($http_response instanceof SymfonyResponse) {
-            $content         = $http_response->getContent();
-            $status          = $http_response->getStatusCode();
-            $body_bytes_sent = strlen($content);
-
-            // gzip handle
-            $accept_gzip = $this->gzip > 0 && isset($request->header['HTTP_ACCEPT_ENCODING']) && stripos($request->header['HTTP_ACCEPT_ENCODING'], 'gzip') !== false;
-
-            if ($accept_gzip && $body_bytes_sent > $this->gzip_min_length && $response->checkGzipMime()) {
-                $response->gzip($this->gzip);
-            }
+            $content = $http_response->getContent();
+            // $status          = $http_response->getStatusCode();
+            // $body_bytes_sent = strlen($content);
 
             $response->end($content);
             if (count($this->app->getMiddleware()) > 0) {
                 $this->app->callTerminableMiddleware($http_response);
             }
         } else {
-            $content         = (string) $http_response;
+            $content = (string) $http_response;
             // $status          = 200;
             // $body_bytes_sent = strlen($content);
             $response->end($content);
