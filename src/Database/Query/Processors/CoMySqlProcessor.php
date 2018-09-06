@@ -6,7 +6,7 @@ use BL\Slumen\Database\CoMySqlManager;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Processors\MySqlProcessor as Processor;
 
-class MySqlProcessor extends Processor
+class CoMySqlProcessor extends Processor
 {
     /**
      * Process an  "insert get ID" query.

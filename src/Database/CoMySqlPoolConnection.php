@@ -1,7 +1,7 @@
 <?php
 namespace BL\Slumen\Database;
 
-use BL\Slumen\Database\Query\Processors\MySqlProcessor;
+use BL\Slumen\Database\Query\Processors\CoMySqlProcessor;
 use Illuminate\Database\MySqlConnection;
 
 class CoMySqlPoolConnection extends MySqlConnection
@@ -14,11 +14,11 @@ class CoMySqlPoolConnection extends MySqlConnection
     /**
      * Get the default post processor instance.
      *
-     * @return \BL\Slumen\Database\Query\Processors\MySqlProcessor
+     * @return \BL\Slumen\Database\Query\Processors\CoMySqlProcessor
      */
     protected function getDefaultPostProcessor()
     {
-        return new MySqlProcessor;
+        return new CoMySqlProcessor;
     }
 
     public function select($query, $bindings = [], $useReadPdo = true)
