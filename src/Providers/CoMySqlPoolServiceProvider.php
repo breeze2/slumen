@@ -5,9 +5,9 @@ namespace BL\Slumen\Providers;
 use BL\Slumen\Database\CoMySqlManager;
 use BL\Slumen\Database\CoMySqlPoolConnection;
 
-class MySqlPoolServiceProvider extends ServiceProvider
+class CoMySqlPoolServiceProvider extends ServiceProvider
 {
-    const PROVIDER_NAME = 'SlumenMySqlPool';
+    const PROVIDER_NAME = 'SlumenCoMySqlPool';
 
     public function register()
     {
