@@ -54,7 +54,7 @@ class CoMySqlManager
             $this->increase();
             $mysql = new CoMySqlClient();
             $mysql->connect($this->config);
-            $mysql->setUsedAt(time());
+            $mysql->setLastUsedAt(time());
             return $mysql;
         }
         return false;
@@ -63,7 +63,7 @@ class CoMySqlManager
     protected function rebuild(CoMySqlClient $mysql)
     {
         $mysql->connect($this->config);
-        $mysql->setUsedAt(time());
+        $mysql->setLastUsedAt(time());
         return $mysql;
     }
 
@@ -94,7 +94,7 @@ class CoMySqlManager
         if (!$mysql->isConnected()) {
             return $this->rebuild($mysql);
         }
-        $mysql->setUsedAt($now);
+        $mysql->setLastUsedAt($now);
         return $mysql;
     }
 

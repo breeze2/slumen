@@ -23,7 +23,7 @@ class CoMySqlClient extends MySQL
         return $this->last_used_at;
     }
 
-    public function setUsedAt($time)
+    public function setLastUsedAt($time)
     {
         $this->last_used_at = $time;
     }
