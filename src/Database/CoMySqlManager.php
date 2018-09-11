@@ -107,7 +107,7 @@ class CoMySqlManager
                 if ($this->shouldRecover()) {
                     $mysql = $this->channel->pop();
                     $now   = time();
-                    if ($now - $mysql->getUsedAt() > $timeout) {
+                    if ($now - $mysql->getLastUsedAt() > $timeout) {
                         $this->decrease();
                     } else {
                         !$this->channel->isFull() && $this->channel->push($mysql);
