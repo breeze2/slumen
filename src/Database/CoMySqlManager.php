@@ -23,17 +23,17 @@ class CoMySqlManager
         $this->number    = 0;
     }
 
-    private function isFull()
+    public function isFull()
     {
         return $this->number >= $this->max_number;
     }
 
-    private function isEmpty()
+    public function isEmpty()
     {
         return $this->number <= 0;
     }
 
-    private function shouldRecover()
+    public function shouldRecover()
     {
         return $this->number > $this->min_number;
     }
