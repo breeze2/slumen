@@ -3,13 +3,9 @@
 namespace BL\Slumen\Redis\Connections;
 
 use BL\Slumen\Redis\RedisServiceProvider;
-use Illuminate\Redis\Connections\Connection as BaseConnection;
 use Exception;
 
-/**
- * @mixin \Predis\Client
- */
-abstract class Connection extends BaseConnection
+trait ConnectionTrait
 {
     protected $last_used_at;
 
@@ -30,12 +26,12 @@ abstract class Connection extends BaseConnection
 
     public function command($method, array $parameters = [])
     {
-        $name = $this->getName();
+        $name          = $this->getName();
         $redis_manager = app(RedisServiceProvider::PROVIDER_NAME_REDIS);
-        $connection = $redis_manager->popConnection($name);
+        $connection    = $redis_manager->popConnection($name);
         try {
             $result = $connection->parentCommand($method, $parameters);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             $redis_manager->destroyConnection($connection);
             throw $e;
             $result = null;
