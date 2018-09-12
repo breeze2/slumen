@@ -2,15 +2,17 @@
 
 return [
 
-    'running_mode'     => constant(env('SLUMEN_RUNNING_MODE', 'SWOOLE_PROCESS')),
-    'socket_type'      => constant(env('SLUMEN_SOCKET_TYPE', 'SWOOLE_SOCK_TCP')),
+    'running_mode'             => constant(env('SLUMEN_RUNNING_MODE', 'SWOOLE_PROCESS')),
+    'socket_type'              => constant(env('SLUMEN_SOCKET_TYPE', 'SWOOLE_SOCK_TCP')),
 
-    'host'             => env('SLUMEN_HOST', '127.0.0.1'),
-    'port'             => env('SLUMEN_PORT', 9080),
-    'static_resources' => env('SLUMEN_STATIC_RESOURCES', false),
-    'stats_uri'        => env('SLUMEN_STATS_URI', '/slumen-stats'),
+    'host'                     => env('SLUMEN_HOST', '127.0.0.1'),
+    'port'                     => env('SLUMEN_PORT', 9080),
+    'static_resources'         => env('SLUMEN_STATIC_RESOURCES', false),
+    'stats_uri'                => env('SLUMEN_STATS_URI', '/slumen-stats'),
 
-    'db_pool'          => [
+    'enable_runtime_coroutine' => env('SLUMEN_ENABLE_RUNTIME_COROUTINE', false),
+
+    'db_pool'                  => [
         'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION', env('SLUMEN_DB_POOL_MAX_CONN', 120)),
         'min_connection'    => env('SLUMEN_DB_POOL_MIN_CONNECTION', env('SLUMEN_DB_POOL_MIN_CONN', 0)),
         'wait_timeout'      => env('SLUMEN_DB_POOL_WAIT_TIMEOUT', 120),
@@ -20,12 +22,12 @@ return [
     /*
     Swoole Http Server
      */
-    'swoole_server'    => [
+    'swoole_server'            => [
         'worker_num'               => env('SLUMEN_WORKER_NUM', 1),
         'max_request'              => env('SLUMEN_MAX_REQUEST', 0),
         'daemonize'                => env('SLUMEN_DAEMONIZE', true),
         'log_file'                 => env('SLUMEN_LOG_FILE', storage_path('logs/slumen.log')),
-        'max_connection'           => env('SLUMEN_MAX_CONNECTION', env('SLUMEN_MAX_CONN', 1024)),
+        'max_connection'           => env('SLUMEN_MAX_CONNECTION', env('SLUMEN_MAX_CONN', null)),
 
         'reactor_num'              => env('SLUMEN_REACTOR_NUM'),
         // 'worker_num'               => env('SLUMEN_WORKER_NUM'),

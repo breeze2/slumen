@@ -8,6 +8,7 @@ use BL\Slumen\Http\EventSubscriber;
 use BL\Slumen\Http\Worker;
 use BL\Slumen\Providers\HttpEventSubscriberServiceProvider;
 use Exception;
+use Swoole\Runtime;
 use swoole_http_server as SwooleHttpServer;
 
 class Service
@@ -29,6 +30,10 @@ class Service
 
         $this->mergeLumenConfig();
         $config = $this->getConfig();
+
+        if ($config['enable_runtime_coroutine']) {
+            Runtime::enableCoroutine();
+        }
 
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
         if (array_key_exists('swoole_server', $config) && is_array($config['swoole_server'])) {
