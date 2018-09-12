@@ -7,16 +7,16 @@ use Exception;
 
 trait ConnectionTrait
 {
-    protected $last_used_at;
+    protected $suit_name;
 
-    public function getLastUsedAt()
+    public function setSuitName($name)
     {
-        return $this->last_used_at;
+        $this->suit_name = $name;
     }
 
-    public function setLastUsedAt($time)
+    public function getSuitName()
     {
-        $this->last_used_at = $time;
+        return $this->suit_name;
     }
 
     public function parentCommand($method, array $parameters = [])
@@ -26,17 +26,18 @@ trait ConnectionTrait
 
     public function command($method, array $parameters = [])
     {
-        $name          = $this->getName();
-        $redis_manager = app(RedisServiceProvider::PROVIDER_NAME_REDIS);
-        $connection    = $redis_manager->popConnection($name);
+        $name       = $this->getSuitName();
+        $manager    = app(RedisServiceProvider::PROVIDER_NAME_REDIS);
+        $suit       = $manager->popConnection($name);
+        $connection = $suit->getConnection();
         try {
             $result = $connection->parentCommand($method, $parameters);
         } catch (Exception $e) {
-            $redis_manager->destroyConnection($connection);
+            $manager->destroyConnection($suit);
             throw $e;
             $result = null;
         }
-        $redis_manager->pushConnection($name, $connection);
+        $manager->pushConnection($name, $suit);
         return $result;
     }
 }

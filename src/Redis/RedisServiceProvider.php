@@ -2,15 +2,16 @@
 
 namespace BL\Slumen\Redis;
 
+use ReflectionMethod;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class RedisServiceProvider extends ServiceProvider
 {
-	const PROVIDER_NAME_REDIS = 'redis';
-	const PROVIDER_NAME_REDIS_CONNECTION = 'redis.connection';
+    const PROVIDER_NAME_REDIS = 'redis';
+    const PROVIDER_NAME_REDIS_CONNECTION = 'redis.connection';
 
-	/**
+    /**
      * Indicates if loading of the provider is deferred.
      *
      * @var bool
@@ -27,7 +28,12 @@ class RedisServiceProvider extends ServiceProvider
         $this->app->singleton(self::PROVIDER_NAME_REDIS, function ($app) {
             $config = $app->make('config')->get('database.redis', []);
 
-            return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
+            $reflection = new ReflectionMethod(RedisManager::class, '__construct');
+            var_dump($reflection->getNumberOfParameters());
+            if($reflection->getNumberOfParameters() === 3) {
+                return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
+            }
+            return new RedisManager(Arr::pull($config, 'client', 'predis'), $config);
         });
 
         $this->app->bind(self::PROVIDER_NAME_REDIS_CONNECTION, function ($app) {

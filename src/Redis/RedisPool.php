@@ -2,7 +2,7 @@
 
 namespace BL\Slumen\Redis;
 
-use BL\Slumen\Redis\Connections\Connection as RedisConnection;
+use BL\Slumen\Redis\Connections\ConnectionSuit;
 use Swoole\Coroutine\Channel as CoChannel;
 
 class RedisPool
@@ -49,7 +49,7 @@ class RedisPool
         return $this->number -= 1;
     }
 
-    public function found(RedisConnection $connection)
+    public function found(ConnectionSuit $connection)
     {
     	if (!$this->isFull()) {
             $this->increase();
@@ -57,7 +57,7 @@ class RedisPool
         return $connection;
     }
 
-    public function destroy(RedisConnection $connection)
+    public function destroy(ConnectionSuit $connection)
     {
         if (!$this->isEmpty()) {
             $this->decrease();
@@ -66,7 +66,7 @@ class RedisPool
         return false;
     }
 
-    public function push(RedisConnection $connection)
+    public function push(ConnectionSuit $connection)
     {
         if (!$this->channel->isFull()) {
             $this->channel->push($connection);

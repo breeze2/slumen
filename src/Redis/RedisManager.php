@@ -2,12 +2,9 @@
 
 namespace BL\Slumen\Redis;
 
-use BL\Slumen\Redis\Connections\Connection;
+use BL\Slumen\Redis\Connections\ConnectionSuit;
 use Illuminate\Redis\RedisManager as BaseRedisManager;
 
-/**
- * @mixin \BL\Slumen\Redis\Connections\Connection
- */
 class RedisManager extends BaseRedisManager
 {
     protected $connection_pools = [];
@@ -25,6 +22,7 @@ class RedisManager extends BaseRedisManager
         $pool = $this->getConnectionPool($name);
         if(!$pool->isFull()) {
             $connection = $this->resolve($name);
+            $connection = new ConnectionSuit($name, $connection);
             return $pool->found($connection);
         }
         $connection = $pool->pop();
@@ -34,16 +32,24 @@ class RedisManager extends BaseRedisManager
         return $connection;
     }
 
-    public function destroyConnection($name = null, Connection $connection) {
+    public function destroyConnection($name = null, ConnectionSuit $connection) {
         $name = $name ?: 'default';
         $pool = $this->getConnectionPool($name);
         return $pool->destroy($connection);
     }
 
-    public function pushConnection($name = null, Connection $connection) {
+    public function pushConnection($name = null, ConnectionSuit $connection) {
         $name = $name ?: 'default';
         $pool = $this->getConnectionPool($name);
         $pool->push($connection);
+    }
+
+    public function connection($name = null)
+    {
+        $name = $name ?: 'default';
+        $connection = parent::connection($name);
+        $connection->setSuitName($name);
+        return $connection;
     }
 
     /**
