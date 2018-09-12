@@ -9,6 +9,11 @@ class RedisManager extends BaseRedisManager
 {
     protected $connection_pools = [];
 
+    /**
+     * [getConnectionPool]
+     * @param  string|null $name
+     * @return RedisPool
+     */
     protected function getConnectionPool($name = null) {
         $name = $name ?: 'default';
         if (isset($this->connection_pools[$name])) {
@@ -17,19 +22,25 @@ class RedisManager extends BaseRedisManager
         return $this->connection_pools[$name] = new RedisPool();
     }
 
+    /**
+     * [popConnection]
+     * @param  string|null $name
+     * @return ConnectionSuit
+     */
     public function popConnection($name = null) {
         $name = $name ?: 'default';
         $pool = $this->getConnectionPool($name);
         if(!$pool->isFull()) {
             $connection = $this->resolve($name);
-            $connection = new ConnectionSuit($name, $connection);
-            return $pool->found($connection);
+            $suit = new ConnectionSuit($name, $connection);
+            return $pool->found($suit);
         }
-        $connection = $pool->pop();
-        if($connection->getLastUsedAt() < time() - 120) {
+        $suit = $pool->pop();
+        if($pool->isExpire($suit)) {
             $connection = $this->resolve($name);
+            $suit = new ConnectionSuit($name, $connection);
         }
-        return $connection;
+        return $suit;
     }
 
     public function destroyConnection($name = null, ConnectionSuit $connection) {

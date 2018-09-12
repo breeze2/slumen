@@ -24,14 +24,27 @@ class RedisPool
         $this->channel    = new CoChannel($max_number);
     }
 
+    /**
+     * [isFull]
+     * @return boolean
+     */
     public function isFull()
     {
         return $this->number >= $this->max_number;
     }
 
+    /**
+     * [isEmpty]
+     * @return boolean
+     */
     public function isEmpty()
     {
         return $this->number <= 0;
+    }
+
+    public function isExpire(ConnectionSuit $connection)
+    {
+        return $connection->getLastUsedAt() < time() - $this->expire;
     }
 
     public function shouldRecover()
@@ -49,6 +62,11 @@ class RedisPool
         return $this->number -= 1;
     }
 
+    /**
+     * [found]
+     * @param  ConnectionSuit $connection
+     * @return ConnectionSuit
+     */
     public function found(ConnectionSuit $connection)
     {
     	if (!$this->isFull()) {
@@ -57,6 +75,11 @@ class RedisPool
         return $connection;
     }
 
+    /**
+     * [destroy]
+     * @param  ConnectionSuit $connection
+     * @return boolean
+     */
     public function destroy(ConnectionSuit $connection)
     {
         if (!$this->isEmpty()) {
@@ -66,6 +89,11 @@ class RedisPool
         return false;
     }
 
+    /**
+     * [push]
+     * @param  ConnectionSuit $connection
+     * @return void
+     */
     public function push(ConnectionSuit $connection)
     {
         if (!$this->channel->isFull()) {
@@ -74,12 +102,16 @@ class RedisPool
         }
     }
 
+    /**
+     * [pop]
+     * @param  float|null $timeout
+     * @return ConnectionSuit
+     */
     public function pop($timeout = 0)
     {
         $connection = $this->channel->pop($timeout);
         if ($connection === false) {
             throw new FetchTimeoutException('Error Fetch Connection Timeout.');
-            return false;
         }
         return $connection;
     }
