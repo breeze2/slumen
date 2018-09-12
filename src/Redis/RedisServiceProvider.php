@@ -29,7 +29,7 @@ class RedisServiceProvider extends ServiceProvider
             $config = $app->make('config')->get('database.redis', []);
 
             $reflection = new ReflectionMethod(RedisManager::class, '__construct');
-            var_dump($reflection->getNumberOfParameters());
+            
             if($reflection->getNumberOfParameters() === 3) {
                 return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
             }

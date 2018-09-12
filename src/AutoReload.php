@@ -50,7 +50,7 @@ class AutoReload
             if (!$events) {
                 return;
             }
-            // var_dump($events);
+            
             foreach ($events as $ev) {
                 if ($ev['mask'] == IN_IGNORED) {
                     continue;
