@@ -14,7 +14,7 @@ class RedisPool
     protected $expire;
     protected $channel;
 
-    public function __construct($max_number = 20, $min_number = 0, $timeout = 10, $expire = 120)
+    public function __construct($max_number = 50, $min_number = 0, $timeout = 10, $expire = 180)
     {
         $this->max_number = $max_number;
         $this->min_number = $min_number;
