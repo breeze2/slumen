@@ -26,18 +26,21 @@ trait ConnectionTrait
 
     public function command($method, array $parameters = [])
     {
-        $name       = $this->getSuitName();
-        $manager    = app(RedisServiceProvider::PROVIDER_NAME_REDIS);
-        $suit       = $manager->popConnection($name);
-        $connection = $suit->getConnection();
+        $name   = $this->getSuitName();
+        $result = null;
+        $suit   = null;
         try {
-            $result = $connection->parentCommand($method, $parameters);
+            $manager    = app(RedisServiceProvider::PROVIDER_NAME_REDIS);
+            $suit       = $manager->popConnection($name);
+            $connection = $suit->getConnection();
+            $result     = $connection->parentCommand($method, $parameters);
+            $manager->pushConnection($name, $suit);
         } catch (Exception $e) {
-            $manager->destroyConnection($suit);
+            if ($suit) {
+                $manager->destroyConnection($suit);
+            }
             throw $e;
-            $result = null;
         }
-        $manager->pushConnection($name, $suit);
         return $result;
     }
 }

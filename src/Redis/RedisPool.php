@@ -111,7 +111,7 @@ class RedisPool
     {
         $connection = $this->channel->pop($timeout);
         if ($connection === false) {
-            throw new FetchTimeoutException('Error Fetch Connection Timeout.');
+            throw new FetchTimeoutException('Error Fetch Redis Connection Timeout.');
         }
         return $connection;
     }
