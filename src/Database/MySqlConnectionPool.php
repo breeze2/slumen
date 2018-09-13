@@ -98,6 +98,7 @@ class MySqlConnectionPool
      */
     public function destroy(MySqlConnection $connection)
     {
+        $connection->isDestroyed(true);
         if (!$this->isEmpty()) {
             $this->decrease();
             return true;
@@ -112,7 +113,7 @@ class MySqlConnectionPool
      */
     public function push(MySqlConnection $connection)
     {
-        if (!$this->channel->isFull()) {
+        if (!$this->channel->isFull() && !$connection->isDestroyed()) {
             $this->channel->push($connection);
             return;
         }

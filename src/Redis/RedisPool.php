@@ -82,6 +82,7 @@ class RedisPool
      */
     public function destroy(ConnectionSuit $connection)
     {
+        $connection->isDestroyed(true);
         if (!$this->isEmpty()) {
             $this->decrease();
             return true;
@@ -96,7 +97,7 @@ class RedisPool
      */
     public function push(ConnectionSuit $connection)
     {
-        if (!$this->channel->isFull()) {
+        if (!$this->channel->isFull() && !$connection->isDestroyed()) {
             $this->channel->push($connection);
             return;
         }

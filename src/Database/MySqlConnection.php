@@ -8,6 +8,7 @@ use Illuminate\Database\MySqlConnection as BaseMySqlConnection;
 class MySqlConnection extends BaseMySqlConnection
 {
     protected $last_used_at;
+    protected $is_destroyed = false;
 
     public function getLastUsedAt()
     {
@@ -17,6 +18,19 @@ class MySqlConnection extends BaseMySqlConnection
     public function setLastUsedAt($time)
     {
         $this->last_used_at = $time;
+    }
+
+    /**
+     * [isDestroyed]
+     * @param  boolean|null $destroyed
+     * @return boolean
+     */
+    public function isDestroyed($destroyed = null)
+    {
+        if($destroyed) {
+            $this->is_destroyed = true;
+        }
+        return $this->is_destroyed;
     }
 
     /**
