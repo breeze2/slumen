@@ -42,7 +42,7 @@ class RedisPool
         return $this->number <= 0;
     }
 
-    public function isExpire(ConnectionSuit $connection)
+    public function isExpired(ConnectionSuit $connection)
     {
         return $connection->getLastUsedAt() < time() - $this->expire;
     }

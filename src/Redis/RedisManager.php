@@ -36,7 +36,7 @@ class RedisManager extends BaseRedisManager
             return $pool->found($suit);
         }
         $suit = $pool->pop();
-        if($pool->isExpire($suit)) {
+        if($pool->isExpired($suit)) {
             $connection = $this->resolve($name);
             $suit = new ConnectionSuit($name, $connection);
         } else {
