@@ -32,7 +32,7 @@ class MySqlConnection extends BaseMySqlConnection
     protected function run($query, $bindings, Closure $callback)
     {
         try {
-            parent::run($query, $bindings, $callback);
+            return parent::run($query, $bindings, $callback);
         } catch (Exception $e) {
             app(MySqlServiceProvider::PROVIDER_NAME_MYSQL)->destroy($this);
             throw $e;
