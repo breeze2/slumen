@@ -2,13 +2,13 @@
 
 namespace BL\Slumen\Redis;
 
-use ReflectionMethod;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
+use ReflectionMethod;
 
 class RedisServiceProvider extends ServiceProvider
 {
-    const PROVIDER_NAME_REDIS = 'redis';
+    const PROVIDER_NAME_REDIS            = 'redis';
     const PROVIDER_NAME_REDIS_CONNECTION = 'redis.connection';
 
     /**
@@ -29,8 +29,8 @@ class RedisServiceProvider extends ServiceProvider
             $config = $app->make('config')->get('database.redis', []);
 
             $reflection = new ReflectionMethod(RedisManager::class, '__construct');
-            
-            if($reflection->getNumberOfParameters() === 3) {
+
+            if ($reflection->getNumberOfParameters() === 3) {
                 return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
             }
             return new RedisManager(Arr::pull($config, 'client', 'predis'), $config);

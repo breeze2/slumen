@@ -69,7 +69,7 @@ class RedisPool
      */
     public function found(ConnectionSuit $connection)
     {
-    	if (!$this->isFull()) {
+        if (!$this->isFull()) {
             $this->increase();
         }
         return $connection;
