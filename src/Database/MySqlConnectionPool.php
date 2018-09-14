@@ -62,10 +62,12 @@ class MySqlConnectionPool
         if (!$this->isFull()) {
             $this->increase();
 
-            $connector  = new MySqlConnector();
-            $pdo        = $connector->connect($this->config);
+            $pdo = $this->makePdo();
             $connection = new MySqlConnection($pdo, $this->config['database'], $this->config['prefix'], $this->config);
             $connection->setLastUsedAt(time());
+            $connection->setReconnector(function ($connection) {
+                $connection->setPdo($this->makePdo());
+            });
             return $connection;
         }
         return false;
@@ -73,11 +75,17 @@ class MySqlConnectionPool
 
     protected function rebuild(MySqlConnection $connection)
     {
-        $connector = new MySqlConnector();
-        $pdo       = $connector->connect($this->config);
+        $pdo = $this->makePdo();
         $connection->setPdo($pdo);
         $connection->setLastUsedAt(time());
         return $connection;
+    }
+
+    protected function makePdo()
+    {
+        $connector = new MySqlConnector();
+        $pdo       = $connector->connect($this->config);
+        return $pdo;
     }
 
     /**
