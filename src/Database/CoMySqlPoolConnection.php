@@ -101,4 +101,25 @@ class CoMySqlPoolConnection extends MySqlConnection
     {
         return $this->pdo->getNumber();
     }
+
+    /**
+     * Run a SQL statement and log its execution context.
+     *
+     * @param  string    $query
+     * @param  array     $bindings
+     * @param  \Closure  $callback
+     * @return mixed
+     *
+     * @throws \Illuminate\Database\QueryException
+     */
+    protected function run($query, $bindings, Closure $callback)
+    {
+        try {
+            return parent::run($query, $bindings, $callback);
+        } catch (Exception $e) {
+            $manager = $this->getPdo();
+            $manager->destroy();
+            throw $e;
+        }
+    }
 }

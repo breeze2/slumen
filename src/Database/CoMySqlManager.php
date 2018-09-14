@@ -67,7 +67,7 @@ class CoMySqlManager
         return $mysql;
     }
 
-    protected function destroy(CoMySqlClient $mysql)
+    public function destroy(CoMySqlClient $mysql =null)
     {
         if (!$this->isEmpty()) {
             $this->decrease();
