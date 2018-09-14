@@ -73,7 +73,9 @@ class MySqlConnectionPool
 
     protected function rebuild(MySqlConnection $connection)
     {
-        $connection->reconnect();
+        $connector = new MySqlConnector();
+        $pdo       = $connector->connect($this->config);
+        $connection->setPdo($pdo);
         $connection->setLastUsedAt(time());
         return $connection;
     }
