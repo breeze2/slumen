@@ -17,6 +17,8 @@ SLUMEN_STATIC_RESOURCES=false             # 是否可以访问public目录下静
 SLUMEN_STATS_URI=/slumen-stats            # Swoole服务器统计信息的uri，默认/slumen-stats，留空则不可访问
 
 SLUMEN_MAX_REQUEST=1024                   # 每个Worker最多处理请求数，之后销毁重生，可以避免内存泄漏，留空则不限制Worker最多处理请求数，默认留空
+
+SLUMEN_ENABLE_RUNTIME_COROUTINE=true      # 开启运行时协程，默认不开启
 ```
 
 ### Swoole服务器参数选项
