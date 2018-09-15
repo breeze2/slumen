@@ -3,7 +3,7 @@
     "description": "speed up lumen with swoole",
     "type": "library",
     "license": "MIT",
-    "version": "1.0.3",
+    "version": "1.2.0",
     "authors": [
         {
             "name": "Breeze",
@@ -28,7 +28,8 @@
         "bin/slumen"
     ],
     "require-dev": {
-        "phpunit/phpunit": "~7.0"
+        "phpunit/phpunit": "~7.0",
+        "vlucas/phpdotenv": "^2.5"
     },
     "archive": {
         "exclude": ["/docs", "/tests", "/.git"]

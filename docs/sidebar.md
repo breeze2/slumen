@@ -21,7 +21,7 @@
 
 - 运行时协程
     - [特性](/5_runtime_coroutine_feature.md)
-    - [MySQL连接池](/5_pdo_mysql__connection_pool.md)
+    - [MySQL连接池](/5_pdo_mysql_connection_pool.md)
     - [Redis连接池](/5_predis_connection_pool.md)
 
 - 部署运行
