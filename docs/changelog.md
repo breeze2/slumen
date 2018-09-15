@@ -1,5 +1,14 @@
 ## 更新日志
 
+### v1.2.0
+_2018/09/15_
+
+#### ✨Improvements
+* Be Compatible with Swoole4.1.0
+* MySQL Connection Pool Service Provider
+* Redis Connection Pool Service Provider
+* Adjust Code of MySQL Coroutine Client Pool
+
 ### v1.0.3
 _2018/08/16_
 
