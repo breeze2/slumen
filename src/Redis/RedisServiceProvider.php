@@ -30,10 +30,16 @@ class RedisServiceProvider extends ServiceProvider
 
             $reflection = new ReflectionMethod(RedisManager::class, '__construct');
 
+            $manager = null;
             if ($reflection->getNumberOfParameters() === 3) {
-                return new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
+                $manager = new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
+            } else {
+                $manager = new RedisManager(Arr::pull($config, 'client', 'predis'), $config);
             }
-            return new RedisManager(Arr::pull($config, 'client', 'predis'), $config);
+            $manager->setConnectionPoolMaker(function () {
+                return new RedisPool();
+            });
+            return $manager;
         });
 
         $this->app->bind(self::PROVIDER_NAME_REDIS_CONNECTION, function ($app) {
