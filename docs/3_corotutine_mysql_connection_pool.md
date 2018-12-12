@@ -29,8 +29,8 @@ SLUMEN_DB_POOL_MAX_CONNECTION = 100
 ```php
 <?php
 return [
-    'db_pool'          => [
-        'max_connection'    => env('SLUMEN_DB_POOL_MAX_CONNECTION') ?: env('SLUMEN_DB_POOL_MAX_CONN', 100),
+    'db_pool' => [
+        'max_connection' => env('SLUMEN_DB_POOL_MAX_CONNECTION') ?: env('SLUMEN_DB_POOL_MAX_CONN', 100),
     ],
 ];
 ```
