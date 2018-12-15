@@ -111,24 +111,29 @@ class Worker
         // $body_bytes_sent = 0;
         // $status          = 200;
         if ($http_response instanceof SymfonyBinaryFileResponse) {
-            $file = $http_response->getFile()->getPathname();
-            // $status          = $http_response->getStatusCode();
+            $file   = $http_response->getFile()->getPathname();
+            $status = $http_response->getStatusCode();
             // $body_bytes_sent = filesize($file);
+
+            $response->status($status);
             $response->sendfile($file);
 
         } else if ($http_response instanceof SymfonyResponse) {
             $content = $http_response->getContent();
-            // $status          = $http_response->getStatusCode();
+            $status  = $http_response->getStatusCode();
             // $body_bytes_sent = strlen($content);
 
+            $response->status($status);
             $response->end($content);
             if (count($this->app->getMiddleware()) > 0) {
                 $this->app->callTerminableMiddleware($http_response);
             }
         } else {
             $content = (string) $http_response;
-            // $status          = 200;
+            $status  = 200;
             // $body_bytes_sent = strlen($content);
+
+            $response->status($status);
             $response->end($content);
         }
     }
