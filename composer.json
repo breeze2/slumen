@@ -3,7 +3,7 @@
     "description": "speed up lumen with swoole",
     "type": "library",
     "license": "MIT",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "authors": [
         {
             "name": "Breeze",
