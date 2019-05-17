@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Model as BaseModel;
 
 class Model extends BaseModel
 {
-    protected $the_connection;
+    protected $runtime_connection;
 
-    public function useConnection(ConnectionInterface $connection)
+    public function setConnection(ConnectionInterface $connection)
     {
-        $this->the_connection = $this->connection;
+        $this->runtime_connection = $connection;
     }
 
     public function getConnection()
     {
-    	if($this->the_connection) {
-        	return $this->the_connection;
+    	if($this->runtime_connection) {
+        	return $this->runtime_connection;
     	} else {
     		return parent::getConnection();
     	}
@@ -51,5 +51,21 @@ class Model extends BaseModel
         return new QueryBuilder(
             $connection, $connection->getQueryGrammar(), $connection->getPostProcessor()
         );
+    }
+
+    /**
+     * Handle dynamic method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if ($method === 'useConnection') {
+            return $this->setConnection(...$parameters);
+        } else {
+            return parent::__call($method, $parameters);
+        }
     }
 }
