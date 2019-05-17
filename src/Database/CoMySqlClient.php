@@ -1,6 +1,7 @@
 <?php
 namespace BL\Slumen\Database;
 
+use RuntimeException;
 use Swoole\Coroutine\MySQL;
 
 class CoMySqlClient extends MySQL
@@ -46,6 +47,9 @@ class CoMySqlClient extends MySQL
     public function runSql($query, array $bindings = [])
     {
         $statement = $this->prepare($query);
+        if ($statement === false) {
+            throw new RuntimeException('Swoole\Coroutine\MySQL Error No.'.$this->errno. ': '.$this->error);
+        }
         $result    = $statement->execute($bindings);
         if ($this->isFetchMode() && $result) {
             $result = $statement->fetchAll();

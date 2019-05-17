@@ -2,6 +2,7 @@
 namespace BL\Slumen\Database;
 
 use BL\Slumen\Database\Query\Processors\CoMySqlProcessor;
+use Closure;
 use Illuminate\Database\MySqlConnection;
 
 class CoMySqlPoolConnection extends MySqlConnection
