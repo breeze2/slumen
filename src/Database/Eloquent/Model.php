@@ -10,7 +10,7 @@ class Model extends BaseModel
 {
     protected $runtime_connection;
 
-    public function setConnection(ConnectionInterface $connection)
+    public function setRuntimeConnection(ConnectionInterface $connection)
     {
         $this->runtime_connection = $connection;
     }
@@ -63,7 +63,7 @@ class Model extends BaseModel
     public function __call($method, $parameters)
     {
         if ($method === 'useConnection') {
-            return $this->setConnection(...$parameters);
+            return $this->setRuntimeConnection(...$parameters);
         } else {
             return parent::__call($method, $parameters);
         }
