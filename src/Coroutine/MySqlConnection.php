@@ -34,11 +34,13 @@ class MySqlConnection extends IlluminateMySqlConnection
 
     public function __construct(MySqlClient $pdo, $database = '', $tablePrefix = '', array $config = [])
     {
-        // $pdo = $getPdo();
         if (isset($config['provider_name'])) {
             $this->provider_name = $config['provider_name'];
         }
-        parent::__construct($pdo, $database, $tablePrefix, $config);
+        parent::__construct(function () use ($pdo) {
+            return $pdo;
+        }, $database, $tablePrefix, $config);
+        $this->pdo = $pdo;
     }
 
     /**
@@ -77,7 +79,7 @@ class MySqlConnection extends IlluminateMySqlConnection
                 return [];
             }
             $bindings = $this->prepareBindings($bindings);
-            return $this->pdo->runSql($query, $bindings);
+            return $this->getPdo()->runSql($query, $bindings);
         });
     }
 
@@ -91,7 +93,7 @@ class MySqlConnection extends IlluminateMySqlConnection
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $statement = $this->pdo->fetchSql($query, $bindings);
+            $statement = $this->getPdo()->fetchSql($query, $bindings);
 
             return $statement;
         });
@@ -109,10 +111,10 @@ class MySqlConnection extends IlluminateMySqlConnection
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $this->pdo->runSql($query, $bindings);
+            $this->getPdo()->runSql($query, $bindings);
 
             $this->recordsHaveBeenModified(
-                ($count = $this->pdo->affectedRowCount()) > 0
+                ($count = $this->getPdo()->affectedRowCount()) > 0
             );
 
             return $count;
@@ -127,7 +129,7 @@ class MySqlConnection extends IlluminateMySqlConnection
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $result = $this->pdo->runSql($query, $bindings);
+            $result = $this->getPdo()->runSql($query, $bindings);
             $this->recordsHaveBeenModified();
 
             return $result;
