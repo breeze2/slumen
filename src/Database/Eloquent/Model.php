@@ -13,6 +13,7 @@ class Model extends BaseModel
     public function setRuntimeConnection(ConnectionInterface $connection)
     {
         $this->runtime_connection = $connection;
+        return $this;
     }
 
     public function getConnection()

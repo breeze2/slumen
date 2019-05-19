@@ -9,5 +9,11 @@ class Builder extends QueryBuilder
 	public function useConnection(ConnectionInterface $connection)
 	{
 		$this->connection = $connection;
+		return $this;
+	}
+
+	public function getConnection()
+	{
+		return $this->connection;
 	}
 }
