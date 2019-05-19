@@ -25,6 +25,7 @@ class Worker
         $this->id     = $worker_id;
         $this->server = $server;
         $this->app    = app();
+        $this->initialize();
     }
 
     public function initialize()
@@ -90,7 +91,7 @@ class Worker
             } else {
                 $status = 200;
                 $response->status($status);
-                $response->header('Content-Type', mime_content_type($file));
+                $response->header('Content-Type', (string)mime_content_type($file));
                 $response->sendFile($file);
             }
 

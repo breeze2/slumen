@@ -1,6 +1,8 @@
 <?php
 namespace BL\Slumen;
 
+use RuntimeException;
+
 class Command
 {
     const VERSION             = 'slumen 0.8.0';
@@ -12,10 +14,14 @@ class Command
 
     private function __construct()
     {
-        $this->pid_file = dirname(SLUMEN_COMPOSER_INSTALL) . '/../storage/slumen.pid';
-        $this->autoload_file = SLUMEN_COMPOSER_INSTALL;
-        $this->checkBootstrap();
-        require $this->bootstrap_file;
+        if (defined('SLUMEN_COMPOSER_INSTALL')) {
+            $this->pid_file = dirname(SLUMEN_COMPOSER_INSTALL) . '/../storage/slumen.pid';
+            $this->autoload_file = SLUMEN_COMPOSER_INSTALL;
+            $this->checkBootstrap();
+            require $this->bootstrap_file;
+        } else {
+            throw new RuntimeException('Slumen is not installed');
+        }
     }
 
     private function checkBootstrap($file = self::BOOTSTRAP_FILE_NAME)

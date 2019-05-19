@@ -8,7 +8,6 @@ if (!ini_get('date.timezone')) {
 foreach (array(__DIR__ . '/../../../autoload.php', __DIR__ . '/../../autoload.php', __DIR__ . '/../vendor/autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
     if (file_exists($file)) {
         define('SLUMEN_COMPOSER_INSTALL', $file);
-
         break;
     }
 }
@@ -26,5 +25,9 @@ if (!defined('SLUMEN_COMPOSER_INSTALL')) {
     die(1);
 }
 
-require SLUMEN_COMPOSER_INSTALL;
-BL\Slumen\Command::main($argv);
+// define('SLUMEN_COMPOSER_INSTALL', '/PATH_TO_PROJECT/vendor/autoload.php');
+if (defined('SLUMEN_COMPOSER_INSTALL')) {
+    require SLUMEN_COMPOSER_INSTALL;
+    BL\Slumen\Command::main($argv);
+
+}
