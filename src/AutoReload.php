@@ -5,9 +5,8 @@
 
 namespace BL\Slumen;
 
-class NotFound extends \Exception
-{
-}
+use Exception;
+
 class AutoReload
 {
     /**
@@ -34,14 +33,14 @@ class AutoReload
         echo $_log;
     }
     /**
-     * @param $serverPid
-     * @throws NotFound
+     * @param int $serverPid
+     * @throws Exception
      */
     public function __construct($serverPid)
     {
         $this->pid = $serverPid;
         if (posix_kill($serverPid, 0) === false) {
-            throw new NotFound("Process#$serverPid not found.");
+            throw new Exception("Process#$serverPid not found.");
         }
         $this->inotify = inotify_init();
         $this->events  = IN_MODIFY | IN_DELETE | IN_CREATE | IN_MOVE;
@@ -87,7 +86,7 @@ class AutoReload
     }
     /**
      * 添加文件类型
-     * @param $type
+     * @param string $type
      */
     public function addFileType($type)
     {
@@ -96,7 +95,7 @@ class AutoReload
     }
     /**
      * 添加事件
-     * @param $inotifyEvent
+     * @param string $inotifyEvent
      */
     public function addEvent($inotifyEvent)
     {
@@ -113,16 +112,16 @@ class AutoReload
         $this->watchFiles = array();
     }
     /**
-     * @param $dir
+     * @param string $dir
      * @param bool $root
      * @return bool
-     * @throws NotFound
+     * @throws Exception
      */
     public function watch($dir, $root = true)
     {
         //目录不存在
         if (!is_dir($dir)) {
-            throw new NotFound("[$dir] is not a directory.");
+            throw new Exception("[$dir] is not a directory.");
         }
         //避免重复监听
         if (isset($this->watchFiles[$dir])) {
