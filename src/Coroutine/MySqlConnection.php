@@ -32,7 +32,11 @@ class MySqlConnection extends IlluminateMySqlConnection
      */
     protected $pdo;
 
-    public function __construct(MySqlClient $pdo, $database = '', $tablePrefix = '', array $config = [])
+    /**
+     * Create a new mysql connection instance.
+     * @return void
+     */
+    public function __construct(MySqlClient $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
         if (isset($config['provider_name'])) {
             $this->provider_name = $config['provider_name'];
