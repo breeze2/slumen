@@ -29,7 +29,7 @@ class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConn
     public function __construct(MySqlClient $pdo, string $database = '', string $tablePrefix = '', array $config = [])
     {
         if (isset($config['provider_name'])) {
-            $this->provider_name = $config['provider_name'];
+            $this->setProviderName($config['provider_name']);
         }
         parent::__construct(function () use ($pdo) {
             return $pdo;
@@ -125,8 +125,8 @@ class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConn
         try {
             return parent::run($query, $bindings, $callback);
         } catch (Exception $e) {
-            if ($this->provider_name) {
-                app($this->provider_name)->destroyConnection($this);
+            if ($provider = $this->getProviderName()) {
+                app($provider)->destroyConnection($this);
             }
             throw $e;
         }

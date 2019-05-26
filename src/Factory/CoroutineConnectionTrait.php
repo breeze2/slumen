@@ -4,6 +4,12 @@ namespace BL\Slumen\Factory;
 trait CoroutineConnectionTrait
 {
     /**
+     * The name of Provider
+     * @var string
+     */
+    protected $provider_name;
+
+    /**
      * The last time used connection.
      * @var int
      */
@@ -15,6 +21,15 @@ trait CoroutineConnectionTrait
      */
     protected $is_destroyed = false;
 
+    public function getProviderName()
+    {
+        return $this->provider_name;
+    }
+
+    public function setProviderName($name)
+    {
+        $this->provider_name = $name;
+    }
 
     public function getLastUsedAt()
     {
