@@ -40,8 +40,8 @@ abstract class CoroutineConnectionPool {
         return $this->number -= 1;
     }
 
-    abstract protected function build();
-    abstract protected function rebuild($connection);
+    abstract protected function buildConnection();
+    abstract protected function rebuildConnection($connection);
 
     /**
      * [foundConnection]
@@ -91,7 +91,7 @@ abstract class CoroutineConnectionPool {
      */
     public function pop($timeout = 0)
     {
-        if ($connection = $this->build()) {
+        if ($connection = $this->buildConnection()) {
             return $connection;
         }
         $connection = $this->channel->pop($timeout);
@@ -100,7 +100,7 @@ abstract class CoroutineConnectionPool {
         }
 
         if ($this->isExpiredConnection($connection)) {
-            return $this->rebuild($connection);
+            return $this->rebuildConnection($connection);
         }
         $connection->setLastUsedAt(time());
         return $connection;

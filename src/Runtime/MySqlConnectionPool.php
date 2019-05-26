@@ -23,10 +23,10 @@ class MySqlConnectionPool extends CoroutineConnectionPool
     }
 
     /**
-     * [build]
+     * [buildConnection]
      * @return MySqlConnection|false
      */
-    protected function build()
+    protected function buildConnection()
     {
         if (!$this->isFull()) {
             $this->increase();
@@ -43,11 +43,11 @@ class MySqlConnectionPool extends CoroutineConnectionPool
     }
 
     /**
-     * [rebuild]
+     * [rebuildConnection]
      * @param MySqlConnection $connection
      * @return MySqlConnection|false
      */
-    protected function rebuild($connection)
+    protected function rebuildConnection($connection)
     {
         $pdo = $this->makePdo();
         $connection->setPdo($pdo);
