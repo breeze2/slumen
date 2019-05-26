@@ -31,9 +31,7 @@ class Service
         $this->mergeLumenConfig();
         $config = $this->getConfig();
 
-        if ($config['enable_runtime_coroutine']) {
-            Runtime::enableCoroutine();
-        }
+        $this->enableRuntimeCoroutine($config['enable_runtime_coroutine']);
 
         $this->server = new SwooleHttpServer($config['host'], $config['port'], $config['running_mode'], $config['socket_type']);
         if (array_key_exists('swoole_server', $config) && is_array($config['swoole_server'])) {
@@ -135,4 +133,30 @@ class Service
         $this->mergeLumenConfig();
     }
 
+    /**
+     * @param boolean|string $flags_string
+     * @return void
+     */
+    protected function enableRuntimeCoroutine($flags_string)
+    {
+        if ($flags_string == true) {
+            Runtime::enableCoroutine();
+        } else if (is_string($flags_string)) {
+            $flag = 0;
+            if (strpos($flags_string, '^')) {
+                $flags = explode('^', $flags_string);
+                foreach ($flags as $v) {
+                    $flag ^= constant($v);
+                }
+            } else if (strpos($flags_string, '|')) {
+                $flags = explode('|', $flags_string);
+                foreach ($flags as $v) {
+                    $flag |= constant($v);
+                }
+            } else {
+                $flag = constant($flags_string);
+            }
+            Runtime::enableCoroutine(true, $flag);
+        }
+    }
 }
