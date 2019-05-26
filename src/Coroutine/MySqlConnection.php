@@ -4,27 +4,17 @@ namespace BL\Slumen\Coroutine;
 use Exception;
 use Closure;
 use Illuminate\Database\MySqlConnection as IlluminateMySqlConnection;
+use BL\Slumen\Factory\CoroutineConnectionInterface;
+use BL\Slumen\Factory\CoroutineConnectionTrait;
 
-class MySqlConnection extends IlluminateMySqlConnection
+class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConnectionInterface
 {
-
+    use CoroutineConnectionTrait;
     /**
      * The name of Provider
      * @var string
      */
     protected $provider_name;
-
-    /**
-     * The last time used connection.
-     * @var int
-     */
-    protected $last_used_at;
-
-    /**
-     * Is connection destroyed?
-     * @var boolean
-     */
-    protected $is_destroyed = false;
 
     /**
      * The active MySqlClient connection.
@@ -54,26 +44,6 @@ class MySqlConnection extends IlluminateMySqlConnection
     public function getPdo()
     {
         return $this->pdo;
-    }
-
-    public function getLastUsedAt()
-    {
-        return $this->last_used_at;
-    }
-
-    public function setLastUsedAt($time)
-    {
-        $this->last_used_at = $time;
-    }
-
-    public function isDestroyed()
-    {
-        return $this->is_destroyed;
-    }
-
-    public function destroy()
-    {
-        $this->is_destroyed = true;
     }
 
     public function select($query, $bindings = [], $useReadPdo = true)
@@ -156,7 +126,7 @@ class MySqlConnection extends IlluminateMySqlConnection
             return parent::run($query, $bindings, $callback);
         } catch (Exception $e) {
             if ($this->provider_name) {
-                app($this->provider_name)->destroy($this);
+                app($this->provider_name)->destroyConnection($this);
             }
             throw $e;
         }

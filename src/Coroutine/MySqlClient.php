@@ -1,7 +1,7 @@
 <?php
 namespace BL\Slumen\Coroutine;
 
-use BL\Slumen\Database\PrepareException;
+use BL\Slumen\Exceptions\PrepareException;
 use Swoole\Coroutine\MySQL;
 
 class MySqlClient extends MySQL
