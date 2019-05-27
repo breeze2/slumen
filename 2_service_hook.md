@@ -29,7 +29,7 @@ class SlumenEventSubscriber extends EventSubscriber
 }
 ```
 
-然后，在启动文件`bootstrap/slumen.php`中，将该类单里注入服务容器：
+然后，在启动文件`bootstrap/slumen.php`中，将该类单例注入服务容器：
 
 ```php
 <?php

@@ -36,7 +36,11 @@ autorestart=true
 stdout_logfile=/PATH/TO/LUMEN_PROJECT/storage/logs/slumen.log
 ```
 
-注意：`numprocs`的值只能是1！
+注意：
+
+* `numprocs`的值只能是1！
+* 执行用户必须对项目路径有对应的读写权限。
+
 保存文件后执行命令：
 ```cmd
 $ sudo supervisorctl reread

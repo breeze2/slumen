@@ -18,6 +18,9 @@ $ cd /PATH/TO/LUMEN/PROJECT
 $ cp vendor/breeze2/slumen/bootstrap/slumen.php ./bootstrap/
 ```
 
+> 注意：Lumen5.8版本应该执行`cp vendor/breeze2/slumen/bootstrap/slumen58.php ./bootstrap/`
+
+
 `bootstrap/slumen.php`与Lumen的`bootstrap/app.php`唯一区别是：
 
 ```php

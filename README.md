@@ -8,7 +8,7 @@
 ## Require
 * PHP >= 7.0.0
 * Lumen >= 5.5.0
-* Swoole >= 1.9.2
+* Swoole >= 4.0.0
 
 ## Install
 

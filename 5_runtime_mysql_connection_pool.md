@@ -9,7 +9,7 @@
 <?php
 ...
 //注册MySql连接池的服务提供者
-$app->register(BL\Slumen\Database\MySqlServiceProvider::class);
+$app->register(BL\Slumen\Providers\RuntimeMySqlPoolServiceProvider::class);
 
 ```
 
@@ -23,9 +23,9 @@ $app->register(BL\Slumen\Database\MySqlServiceProvider::class);
 $result = app('db')->table('users')->where('id', 1)->get();
 
 //MySQL连接池用法
-$connection = app('mysql')->pop();
+$connection = app('rt-mysql-pool')->pop();
 $result = $connection->table('users')->where('id', 1)->get();
-app('mysql')->push($connection);
+app('rt-mysql-pool')->push($connection);
 
 ```
 
@@ -38,9 +38,9 @@ $result = App\Models\User::where('id', 1)->get();
 
 //MySQL连接池用法
 //注意，这里的App\Models\User须继承自BL\Slumen\Database\Eloquent\Model
-$connection = app('mysql')->pop();
-$result = App\Models\User::useConnection()->where('id', 1)->get();
-app('mysql')->push($connection);
+$connection = app('rt-mysql-pool')->pop();
+$result = App\Models\User::useConnection($connection)->where('id', 1)->get();
+app('rt-mysql-pool')->push($connection);
 
 ```
 
@@ -53,15 +53,15 @@ MySQL连接池的默认容量是50，即一个Server Worker最多建立50个MySQ
 
 namespace App\Providers;
 
-use BL\Slumen\Database\MySqlServiceProvider as ServiceProvider;
+use BL\Slumen\Providers\RuntimeMySqlPoolServiceProvider as ServiceProvider;
 
 class MySqlServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton(self::PROVIDER_NAME_MYSQL, function ($app) {
+        $this->app->singleton(self::PROVIDER_NAME, function ($app) {
             $config         = $app->make('config')->get('database.connections.mysql', []);
-            $config['name'] = 'mysql';
+            $config['name'] = 'rt-mysql-pool';
             return new MySqlConnectionPool($config, 60);//60是连接池最大容量
         });
     }

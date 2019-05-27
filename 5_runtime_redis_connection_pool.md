@@ -1,6 +1,6 @@
 ## Redis连接池
 
-**Slumen**在[illuminate/redis](https://github.com/illuminate/redis)的基础上封装了一个Redis连接池，调用方法与原本无异。
+**Slumen**在[illuminate/redis](https://github.com/illuminate/redis)的基础上封装了一个Redis连接池。
 
 ### 配置
 
@@ -71,51 +71,29 @@ $app->configure('database');
 <?php
 ...
 //注册Redis连接池的服务提供者
-$app->register(BL\Slumen\Redis\RedisServiceProvider::class);
+$app->register(BL\Slumen\Providers\RuntimeRedisPoolServiceProvider::class);
 
 ```
 
 ### 使用
 
-使用方法与Laravel的[Redis](https://laravel.com/docs/5.5/redis)部分文档介绍一样，在连接池中取出连接、放回连接等操作，**Slumen**底层代码实现，使用者无需关心。
+在连接池中取出的Redis连接，使用方法与Laravel的[Redis](https://laravel.com/docs/5.5/redis)部分文档介绍一样。
 
-### 另外
-
-Redis连接池的默认容量是50，即一个Server Worker最多建立50个Redis连接。如需调整，可以自行创建新的Redis连接池服务提供者，如：
+例如：
 
 ```php
 <?php
 
-namespace App\Providers;
-
-use BL\Slumen\Redis\RedisServiceProvider as ServiceProvider;
-
-class RedisServiceProvider extends ServiceProvider
-{
-    public function register()
-    {
-        $this->app->singleton(self::PROVIDER_NAME_REDIS, function ($app) {
-            $config = $app->make('config')->get('database.redis', []);
-
-            $reflection = new ReflectionMethod(RedisManager::class, '__construct');
-
-            $manager = null;
-            if ($reflection->getNumberOfParameters() === 3) {//兼容illuminate/redis 5.7版本
-                $manager = new RedisManager($app, Arr::pull($config, 'client', 'predis'), $config);
-            } else {
-                $manager = new RedisManager(Arr::pull($config, 'client', 'predis'), $config);
-            }
-            $manager->setConnectionPoolMaker(function () {
-                return new RedisPool(60);//60是连接池最大容量
-            });
-            return $manager;
-        });
-
-        $this->app->bind(self::PROVIDER_NAME_REDIS_CONNECTION, function ($app) {
-            return $app[self::PROVIDER_NAME_REDIS]->connection();
-        });
-    }
+$c = app('rt-redis-pool')->pop();
+try {
+    $c->set('name', 'Taylor');
+} finally {
+    app('rt-redis-pool')->push($c);
 }
 
 ```
+
+### 另外
+
+Redis连接池的默认容量是50，即一个Server Worker最多建立50个Redis连接。如需调整，可以参考`BL\Slumen\Providers\RuntimeRedisPoolServiceProvider`自行创建新的Redis连接池服务提供者。
 

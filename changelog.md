@@ -1,5 +1,13 @@
 ## 更新日志
 
+### v1.3.0
+_2019/05/27_
+
+#### 💥Breaking changes
+* new coroutine client based mysql connection pool
+* new runtime coroutine based mysql connectoin pool
+* new runtime coroutine based redis connectoin pool
+
 ### v1.2.1
 _2018/12/15_
 
