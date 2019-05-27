@@ -1,12 +1,12 @@
 <?php
 namespace BL\Slumen\Runtime;
-use PDO;
-use Closure;
-use Exception;
-use Illuminate\Database\MySqlConnection as BaseMySqlConnection;
 
 use BL\Slumen\Factory\CoroutineConnectionInterface;
 use BL\Slumen\Factory\CoroutineConnectionTrait;
+use Closure;
+use Exception;
+use Illuminate\Database\MySqlConnection as BaseMySqlConnection;
+use PDO;
 
 class MySqlConnection extends BaseMySqlConnection implements CoroutineConnectionInterface
 {

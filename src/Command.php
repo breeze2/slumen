@@ -15,7 +15,7 @@ class Command
     private function __construct()
     {
         if (defined('SLUMEN_COMPOSER_INSTALL')) {
-            $this->pid_file = dirname(SLUMEN_COMPOSER_INSTALL) . '/../storage/slumen.pid';
+            $this->pid_file      = dirname(SLUMEN_COMPOSER_INSTALL) . '/../storage/slumen.pid';
             $this->autoload_file = SLUMEN_COMPOSER_INSTALL;
             $this->checkBootstrap();
             require $this->bootstrap_file;

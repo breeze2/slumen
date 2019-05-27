@@ -91,7 +91,7 @@ class Worker
             } else {
                 $status = 200;
                 $response->status($status);
-                $response->header('Content-Type', (string)mime_content_type($file));
+                $response->header('Content-Type', (string) mime_content_type($file));
                 $response->sendFile($file);
             }
 

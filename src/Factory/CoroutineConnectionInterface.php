@@ -1,7 +1,8 @@
 <?php
 namespace BL\Slumen\Factory;
 
-interface CoroutineConnectionInterface {
+interface CoroutineConnectionInterface
+{
     /**
      * @return string The provider name.
      */

@@ -14,7 +14,7 @@ class CoroutineMySqlPoolServiceProvider extends ServiceProvider
             $config = $app->make('config')->get('database.connections.mysql', []);
 
             if ($config) {
-                $db_pool = config('slumen.db_pool');
+                $db_pool                 = config('slumen.db_pool');
                 $config['provider_name'] = self::PROVIDER_NAME;
                 return new MySqlConnectionPool($config, $db_pool['max_connection'], $db_pool['min_connection']);
             }

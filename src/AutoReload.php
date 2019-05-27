@@ -49,7 +49,7 @@ class AutoReload
             if (!$events) {
                 return;
             }
-            
+
             foreach ($events as $ev) {
                 if ($ev['mask'] == IN_IGNORED) {
                     continue;

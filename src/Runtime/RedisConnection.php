@@ -1,11 +1,9 @@
 <?php
 namespace BL\Slumen\Runtime;
 
-use Closure;
-use Exception;
-
 use BL\Slumen\Factory\CoroutineConnectionInterface;
 use BL\Slumen\Factory\CoroutineConnectionTrait;
+use Exception;
 use Illuminate\Redis\Connections\Connection;
 
 /**

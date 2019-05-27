@@ -18,11 +18,11 @@ class Model extends BaseModel
 
     public function getConnection()
     {
-    	if($this->runtime_connection) {
-        	return $this->runtime_connection;
-    	} else {
-    		return parent::getConnection();
-    	}
+        if ($this->runtime_connection) {
+            return $this->runtime_connection;
+        } else {
+            return parent::getConnection();
+        }
     }
 
     /**

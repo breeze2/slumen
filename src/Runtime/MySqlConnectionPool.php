@@ -1,11 +1,9 @@
 <?php
 namespace BL\Slumen\Runtime;
 
-use BL\Slumen\Database\FetchTimeoutException;
-use Illuminate\Database\Connectors\MySqlConnector;
-use Swoole\Coroutine as Coroutine;
-use Swoole\Coroutine\Channel as CoroutineChannel;
 use BL\Slumen\Factory\CoroutineConnectionPool;
+use Illuminate\Database\Connectors\MySqlConnector;
+use Swoole\Coroutine\Channel as CoroutineChannel;
 
 class MySqlConnectionPool extends CoroutineConnectionPool
 {
@@ -31,7 +29,7 @@ class MySqlConnectionPool extends CoroutineConnectionPool
         if (!$this->isFull()) {
             $this->increase();
 
-            $pdo = $this->makePdo();
+            $pdo        = $this->makePdo();
             $connection = new MySqlConnection($pdo, $this->config['database'], $this->config['prefix'], $this->config);
             $connection->setLastUsedAt(time());
             $connection->setReconnector(function ($connection) {

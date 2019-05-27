@@ -1,13 +1,13 @@
 <?php
 namespace BL\Slumen\Runtime;
 
-use InvalidArgumentException;
-use Illuminate\Support\Arr;
 use BL\Slumen\Factory\CoroutineConnectionPool;
-use Swoole\Coroutine\Channel as CoroutineChannel;
 use Illuminate\Redis\Connections\Connection;
 use Illuminate\Redis\Connectors\PhpRedisConnector;
 use Illuminate\Redis\Connectors\PredisConnector;
+use Illuminate\Support\Arr;
+use InvalidArgumentException;
+use Swoole\Coroutine\Channel as CoroutineChannel;
 
 class RedisConnectionPool extends CoroutineConnectionPool
 {
@@ -27,10 +27,10 @@ class RedisConnectionPool extends CoroutineConnectionPool
 
         $this->max_number = $max_number;
         $this->min_number = $min_number;
-        $this->channel = new CoroutineChannel($max_number);
-        $this->config = $config;
-        $this->expire = $expire;
-        $this->number = 0;
+        $this->channel    = new CoroutineChannel($max_number);
+        $this->config     = $config;
+        $this->expire     = $expire;
+        $this->number     = 0;
     }
 
     /**
@@ -115,7 +115,7 @@ class RedisConnectionPool extends CoroutineConnectionPool
     {
         if (!$this->isFull()) {
             $this->increase();
-            $connection_name = isset($this->config['connection_name']) ? $this->config['connection_name'] : '';
+            $connection_name  = isset($this->config['connection_name']) ? $this->config['connection_name'] : '';
             $inner_connection = $this->configure($this->resolve($connection_name), $connection_name);
 
             $connection = new RedisConnection($inner_connection, $this->config);
@@ -132,9 +132,9 @@ class RedisConnectionPool extends CoroutineConnectionPool
      */
     protected function rebuildConnection($connection)
     {
-        $connection_name = isset($this->config['connection_name']) ? $this->config['connection_name'] : '';
+        $connection_name  = isset($this->config['connection_name']) ? $this->config['connection_name'] : '';
         $inner_connection = $this->configure($this->resolve($connection_name), $connection_name);
-        $connection = new RedisConnection($inner_connection, $this->config);
+        $connection       = new RedisConnection($inner_connection, $this->config);
         $connection->setLastUsedAt(time());
         return $connection;
     }

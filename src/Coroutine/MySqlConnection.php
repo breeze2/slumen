@@ -1,11 +1,11 @@
 <?php
 namespace BL\Slumen\Coroutine;
 
-use Exception;
-use Closure;
-use Illuminate\Database\MySqlConnection as IlluminateMySqlConnection;
 use BL\Slumen\Factory\CoroutineConnectionInterface;
 use BL\Slumen\Factory\CoroutineConnectionTrait;
+use Closure;
+use Exception;
+use Illuminate\Database\MySqlConnection as IlluminateMySqlConnection;
 
 class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConnectionInterface
 {
@@ -66,7 +66,7 @@ class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConn
             if ($useReadPdo) { // TODO: use read PDO
             }
 
-            $bindings = $this->prepareBindings($bindings);
+            $bindings  = $this->prepareBindings($bindings);
             $statement = $this->getPdo()->fetchSql($query, $bindings);
 
             return $statement;
@@ -103,7 +103,7 @@ class MySqlConnection extends IlluminateMySqlConnection implements CoroutineConn
             }
 
             $bindings = $this->prepareBindings($bindings);
-            $result = $this->getPdo()->runSql($query, $bindings);
+            $result   = $this->getPdo()->runSql($query, $bindings);
             $this->recordsHaveBeenModified();
 
             return $result;

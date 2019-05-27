@@ -1,8 +1,11 @@
 <?php
 namespace BL\Slumen\Factory;
-use BL\Slumen\Exceptions\FetchTimeoutException;
 
-abstract class CoroutineConnectionPool {
+use BL\Slumen\Exceptions\FetchTimeoutException;
+use Swoole\Coroutine as Coroutine;
+
+abstract class CoroutineConnectionPool
+{
     protected $max_number;
     protected $min_number;
     protected $channel;
@@ -114,7 +117,7 @@ abstract class CoroutineConnectionPool {
                 Coroutine::sleep($sleep);
                 if ($this->shouldRecover()) {
                     $connection = $this->channel->pop();
-                    $now = time();
+                    $now        = time();
                     if ($now - $connection->getLastUsedAt() > $timeout) {
                         $this->decrease();
                     } else {
