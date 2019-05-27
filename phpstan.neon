@@ -1,5 +1,0 @@
-parameters:
-    autoload_files:
-        - %currentWorkingDirectory%/src/helpers.php
-    dynamicConstantNames:
-        - SLUMEN_COMPOSER_INSTALL
