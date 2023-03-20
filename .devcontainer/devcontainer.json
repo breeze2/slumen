@@ -1,5 +1,7 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/php:0-7.3",
+  "name": "PHP",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/vscode/devcontainers/php:7.3",
   "features": {
   }
 }
